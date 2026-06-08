@@ -8,6 +8,8 @@
 
 **GhostRedRecon** is a local-first Linux red-team reconnaissance console for authorized WiFi, BLE, IoT, and camera assessment workflows. It turns a Kali workstation, an MK7AC WiFi adapter, and an nRF52840 BLE dongle into a browser-based operator console for evidence-backed discovery, validation, and review.
 
+<img width="1024" height="1536" alt="GhostRedRecon-Flyer" src="https://github.com/user-attachments/assets/e09d8277-46cf-4b49-a7a7-0844b8203791" />
+
 Repository: <https://github.com/GhostRedRecon/GhostRedRecon>
 
 > Educational and authorized use only: GhostRedRecon is for learning, research, lab validation, owned-device testing, and explicitly authorized assessments. Do not use this project for unauthorized access, credential theft, illegal monitoring, network abuse, privacy invasion, or attacks against systems you do not own or have permission to test.
@@ -15,6 +17,8 @@ Repository: <https://github.com/GhostRedRecon/GhostRedRecon>
 ## Why Ethical Hackers Use It
 
 GhostRedRecon is for red-team operators, ethical hackers, wireless lab builders, and cybersecurity engineers who want a practical way to turn raw RF/network signals into reviewable evidence. Instead of jumping between disconnected terminals, packet captures, Bluetooth tools, service probes, and notes, GhostRedRecon gives you a local operator console built around discovery, validation, and evidence.
+
+<img width="1200" height="1600" alt="ghostredrecon" src="https://github.com/user-attachments/assets/ae63723b-8e60-41a3-af4b-0b202ff05169" />
 
 It is designed for authorized labs and assessments where the interesting question is not just "what is broadcasting?" but "what is it, why do we think that, what evidence supports it, and what should the operator review next?"
 
