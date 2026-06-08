@@ -56,6 +56,24 @@ GhostRedRecon is designed for Linux workstations.
 | Host Bluetooth adapter | BLE host-side validation | Requires BlueZ, rfkill unblock, and working Linux Bluetooth service. |
 | Laptop/desktop CPU, 16 GB RAM recommended | Full GUI + backend + captures | More RAM helps when packet captures, Kismet, and frontend dev server run together. |
 
+Important hardware setup note:
+
+- Connect the nRF52840 BLE dongle and MK7AC WiFi adapter before running the installer. The installer and startup checks report currently visible USB/WiFi hardware, so plugging in the adapters first gives the cleanest first-run setup.
+- If the GUI does not show the nRF dongle or MK7AC adapter after installation, stop and restart the local services:
+
+  ```bash
+  ./scripts/stop.sh
+  ./scripts/start.sh
+  ```
+
+- If you do not have an MK7AC adapter, use a Linux WiFi adapter that supports monitor mode and packet capture. Set the preferred interface before starting the app, for example:
+
+  ```bash
+  WIFI_MK7_PREFERRED_INTERFACE=wlan2 ./scripts/start.sh
+  ```
+
+  Some GUI labels and workflow names still refer to MK7AC because that is the validated public v1 WiFi path. If you want the project to present a different adapter as the primary WiFi sensor, update the relevant config/source labels and verify monitor-mode behavior on your hardware.
+
 ## Architecture
 
 ```text
@@ -124,6 +142,13 @@ git clone https://github.com/GhostRedRecon/GhostRedRecon.git
 cd GhostRedRecon
 ```
 
+Before running the installer, connect the nRF52840 BLE dongle and MK7AC WiFi adapter. If you are using a different monitor-mode WiFi adapter, confirm Linux can see it:
+
+```bash
+iw dev
+lsusb
+```
+
 Run the installer:
 
 ```bash
@@ -147,6 +172,13 @@ The installer performs these tasks:
 - Prints current WiFi/USB hardware visibility.
 
 If group membership changes, log out and back in before using monitor-mode or capture workflows.
+
+After installation, start GhostRedRecon and confirm the adapters appear in Home or Settings. If the GUI does not show the adapter state correctly after plugging in hardware, restart the local services:
+
+```bash
+./scripts/stop.sh
+./scripts/start.sh
+```
 
 ## Start And Stop
 

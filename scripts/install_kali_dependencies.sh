@@ -279,13 +279,15 @@ check_project_config() {
 
 check_hardware_state() {
   log "Checking connected WiFi/USB hardware state..."
+  log "Recommended first-run setup: connect the nRF52840 BLE dongle and MK7AC WiFi adapter before running this installer."
   iw dev || true
   lsusb || true
   if ip link show wlan1 >/dev/null 2>&1; then
     log "wlan1 detected."
   else
-    log "wlan1 not detected right now. Install completed; connect the MK7AC before WiFi Hunt operation."
+    log "wlan1 not detected right now. Connect the MK7AC before WiFi Hunt operation, or use a monitor-mode adapter and start with WIFI_MK7_PREFERRED_INTERFACE=<iface> ./scripts/start.sh."
   fi
+  log "If the GUI does not show connected adapters after installation, run ./scripts/stop.sh and then ./scripts/start.sh."
 }
 
 main() {
