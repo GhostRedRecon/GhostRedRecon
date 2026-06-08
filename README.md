@@ -12,7 +12,7 @@ Repository: <https://github.com/GhostRedRecon/GhostRedRecon>
 
 > Educational and authorized use only: GhostRedRecon is for learning, research, lab validation, owned-device testing, and explicitly authorized assessments. Do not use this project for unauthorized access, credential theft, illegal monitoring, network abuse, privacy invasion, or attacks against systems you do not own or have permission to test.
 
-## Why Ethical Hackers Try It
+## Why Ethical Hackers Use It
 
 GhostRedRecon is for red-team operators, ethical hackers, wireless lab builders, and cybersecurity engineers who want a practical way to turn raw RF/network signals into reviewable evidence. Instead of jumping between disconnected terminals, packet captures, Bluetooth tools, service probes, and notes, GhostRedRecon gives you a local operator console built around discovery, validation, and evidence.
 
