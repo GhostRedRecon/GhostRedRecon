@@ -12,11 +12,13 @@ Repository: <https://github.com/GhostRedRecon/GhostRedRecon>
 
 > Educational and authorized use only: GhostRedRecon is for learning, research, lab validation, owned-device testing, and explicitly authorized assessments. Do not use this project for unauthorized access, credential theft, illegal monitoring, network abuse, privacy invasion, or attacks against systems you do not own or have permission to test.
 
-## Why People Try It
+## Why Ethical Hackers Try It
 
-GhostRedRecon is built for the moment when a lab has wireless hardware plugged in, packets are moving, and the operator needs more than scattered terminal output. It brings WiFi packet truth, BLE device intelligence, camera-hunt evidence, runtime health, and session artifacts into one GUI so findings can be reviewed instead of guessed.
+GhostRedRecon is for red-team operators, ethical hackers, wireless lab builders, and cybersecurity engineers who want a practical way to turn raw RF/network signals into reviewable evidence. Instead of jumping between disconnected terminals, packet captures, Bluetooth tools, service probes, and notes, GhostRedRecon gives you a local operator console built around discovery, validation, and evidence.
 
-Public v1 focuses on the workflows that are ready for authorized lab use:
+It is designed for authorized labs and assessments where the interesting question is not just "what is broadcasting?" but "what is it, why do we think that, what evidence supports it, and what should the operator review next?"
+
+Public v1 gives operators a focused toolkit:
 
 - WiFi MK7AC packet-truth hunting for AP/client discovery and evidence review.
 - Camera Hunt for WiFi, IP, and cloud-camera lead detection.
