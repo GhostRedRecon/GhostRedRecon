@@ -1,0 +1,2107 @@
+# =============================================================================
+# PROJECT:      GHOSTRECON
+# FILE:         backend/intel/db/device_intelligence_db.yaml
+# VERSION:      v3.0.0
+# LAST UPDATED: 2026-03-15
+#
+# =============================================================================
+# PROJECT CONTEXT
+# =============================================================================
+# GhostRecon is an RF red-team intelligence platform designed for passive
+# spectrum reconnaissance, protocol inference, device classification, product
+# identification, and attack-surface prioritization.
+#
+# This database is the canonical passive intelligence knowledge base used by
+# DeviceIntelligenceEngine v5.x. It replaces fragmented protocol/device/product
+# YAML stores with one normalized schema so the engine can perform:
+#
+#   1. protocol-family-aware device scoring
+#   2. vendor and product hint fusion
+#   3. burst-shape and interval correlation
+#   4. red-team attack-surface enrichment
+#   5. explainable evidence-based device ranking
+#
+# =============================================================================
+# ARCHITECTURE
+# =============================================================================
+# Recon / PHY / Protocol Layers
+#      ↓
+# signal_engine.py
+#      ↓
+# protocol_engine.py
+#      ↓
+# device_intelligence_engine.py
+#      ↓
+# device_intelligence_db.yaml  <--- THIS FILE
+#      ↓
+# device class / vendor / product scoring
+#      ↓
+# red-team surface enrichment
+#      ↓
+# API / frontend / graph / reporting
+#
+# =============================================================================
+# DESIGN PRINCIPLES
+# =============================================================================
+# 1. Single canonical intelligence database
+# 2. Passive-RF-first matching only
+# 3. Explainable, score-based identity inference
+# 4. Protocol-family normalization before classification
+# 5. Separation of device class, product profile, and burst evidence
+# 6. Safe fallback to UNKNOWN when evidence is weak
+# 7. Production-ready schema stability for engine evolution
+#
+# =============================================================================
+# RESPONSIBILITY
+# =============================================================================
+# This file defines:
+# - protocol family normalization metadata
+# - global confidence thresholds and matching weights
+# - canonical device profiles
+# - canonical product profiles
+# - canonical burst signatures
+# - vendor normalization aliases
+# - red-team surface mapping rules
+#
+# This file does NOT:
+# - perform runtime classification
+# - store live observations
+# - contain offensive execution logic
+#
+# =============================================================================
+
+metadata:
+  name: "GhostRecon Device Intelligence Database"
+  version: "v3.0.0"
+  schema_version: "3.0"
+  owner: "GhostRecon"
+  description: "Canonical passive RF intelligence database for DeviceIntelligenceEngine v5.x"
+  compatibility:
+    min_engine_version: "5.0.0"
+    max_engine_version: "5.x"
+  notes:
+    - "Merged and normalized replacement for prior device_signatures / protocol_device_profiles / rf_burst_signatures YAML files."
+    - "Optimized for passive RF classification and red-team surface enrichment."
+
+normalization:
+  protocol_family_aliases:
+    wifi: ["wifi", "wi-fi", "802.11", "80211", "wlan"]
+    bluetooth_le: ["ble", "bluetooth le", "bluetooth_low_energy", "btle"]
+    bluetooth_classic: ["bluetooth", "bluetooth classic", "bt classic", "bdr", "edr"]
+    zigbee: ["zigbee", "ieee 802.15.4", "802.15.4"]
+    thread: ["thread", "openthread", "thread mesh"]
+    lora: ["lora", "lorawan", "lo-ra"]
+    subghz_ook: ["433_ook", "ook", "ask", "am-ook", "subghz_ook"]
+    subghz_fsk: ["2fsk", "gfsk", "fsk", "subghz_fsk"]
+    wireless_mbus: ["wmbus", "w-mbus", "wireless m-bus", "wireless_mbus"]
+    proprietary_iot: ["proprietary", "proprietary_iot", "unknown_iot", "custom rf"]
+
+  vendor_aliases:
+    tp-link: ["tp-link", "tplink", "tp link"]
+    xiaomi: ["xiaomi", "mi", "mijia", "aqara", "redmi"]
+    philips: ["philips", "philips hue", "signify"]
+    amazon: ["amazon", "ring", "blink", "echo"]
+    google: ["google", "nest", "pixel", "fitbit", "chromecast", "google tv"]
+    apple: ["apple", "airtag", "homepod", "iphone", "ipad", "apple watch", "airpods", "apple tv"]
+    samsung: ["samsung", "smartthings", "galaxy", "galaxy watch", "galaxy buds", "smarttag"]
+    sonos: ["sonos"]
+    sony: ["sony", "bravia", "sony tv", "sony headphones", "sony speaker"]
+    lg: ["lg", "webos", "lg tv"]
+    orange: ["orange", "orange tv", "descodificador orange", "orange decoder"]
+    jbl: ["jbl", "harman", "harman kardon"]
+    bose: ["bose", "soundlink"]
+    beats: ["beats", "beats by dre"]
+    garmin: ["garmin"]
+    fitbit: ["fitbit"]
+    bosch: ["bosch"]
+    yale: ["yale", "assure"]
+    august: ["august"]
+    ecobee: ["ecobee"]
+    eufy: ["eufy", "anker"]
+    tuya: ["tuya", "smartlife"]
+    lifx: ["lifx"]
+    ubiquiti: ["ubiquiti", "unifi", "ui"]
+    netgear: ["netgear"]
+    dlink: ["d-link", "dlink"]
+    linksys: ["linksys"]
+    shelly: ["shelly", "allterco"]
+    sonoff: ["sonoff", "itead"]
+    ikea: ["ikea", "tradfri", "trådfri", "dirigera", "styrbar", "rodret", "parasoll", "vallhorn", "badring", "fyrtur", "tretakt"]
+    netatmo: ["netatmo", "legrand"]
+    tado: ["tado", "tado°"]
+    somfy: ["somfy"]
+    develco: ["develco", "frient"]
+    danfoss: ["danfoss"]
+    bosch_smart_home: ["bosch smart home", "bosch"]
+    hive: ["hive", "british gas hive"]
+    eve: ["eve", "eve systems"]
+    meross: ["meross"]
+    govee: ["govee"]
+    switchbot: ["switchbot"]
+    opple: ["opple"]
+    schneider_electric: ["schneider electric", "wiser"]
+    legrand: ["legrand", "bticino", "celiane"]
+    tuya_oem: ["tuya", "smartlife", "moes", "nous", "zemismart", "avatto", "lonsonho"]
+    aqara: ["aqara", "lumi", "xiaomi aqara"]
+    huawei: ["huawei", "honor"]
+    oppo: ["oppo"]
+    vivo: ["vivo"]
+    oneplus: ["oneplus"]
+    realme: ["realme"]
+    haier: ["haier"]
+    midea: ["midea"]
+    hisense: ["hisense"]
+    roborock: ["roborock"]
+    dreame: ["dreame"]
+    ecovacs: ["ecovacs", "deebot"]
+    yeelight: ["yeelight"]
+    orvibo: ["orvibo"]
+    broadlink: ["broadlink"]
+    imou: ["imou"]
+    hikvision: ["hikvision", "ezviz"]
+    reolink: ["reolink"]
+    xiaomi_mi_home: ["xiaomi", "mi home", "mijia"]
+    sonoff_ewelink: ["sonoff", "ewelink", "itead"]
+    archos: ["archos"]
+    devolo: ["devolo"]
+    fritz: ["fritz", "avm"]
+
+matching_weights:
+  protocol_family: 0.22
+  frequency_band: 0.14
+  channel_hint: 0.05
+  bandwidth: 0.10
+  modulation: 0.12
+  burst_interval: 0.12
+  burst_duration: 0.10
+  vendor_hint: 0.07
+  name_hint: 0.03
+  subtype_hint: 0.03
+  temporal_behavior: 0.02
+
+confidence_thresholds:
+  unknown_score_threshold: 0.35
+  weak_score_threshold: 0.48
+  strong_score_threshold: 0.67
+  product_score_threshold: 0.78
+  min_win_margin: 0.08
+  min_evidence_score: 0.30
+  max_candidates: 5
+
+protocol_families:
+  - protocol_family: "wifi"
+    description: "IEEE 802.11 based wireless LAN activity"
+    expected_band_mhz:
+      - [2400, 2500]
+      - [5150, 5895]
+    expected_bw_khz: [20000, 40000, 80000, 160000]
+    common_modulations: ["ofdm", "ofdm_wideband"]
+    common_subtypes:
+      - "access_point"
+      - "client"
+      - "camera"
+      - "iot"
+      - "streaming_audio"
+      - "smart_appliance"
+
+  - protocol_family: "bluetooth_le"
+    description: "Bluetooth Low Energy advertising or connection-oriented activity"
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [1000, 2000]
+    common_modulations: ["gfsk", "fsk"]
+    common_subtypes:
+      - "beacon"
+      - "tracker"
+      - "wearable"
+      - "sensor"
+      - "smart_lock"
+      - "phone_accessory"
+
+  - protocol_family: "bluetooth_classic"
+    description: "Bluetooth BR/EDR devices"
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [1000, 2000]
+    common_modulations: ["gfsk", "fsk"]
+    common_subtypes:
+      - "audio"
+      - "phone"
+      - "computer_peripheral"
+
+  - protocol_family: "zigbee"
+    description: "IEEE 802.15.4 Zigbee mesh devices"
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [2000, 3000]
+    common_modulations: ["oqpsk", "dsss", "psk"]
+    common_subtypes:
+      - "motion_sensor"
+      - "door_sensor"
+      - "smart_bulb"
+      - "switch"
+      - "coordinator"
+      - "router"
+      - "smart_plug"
+
+  - protocol_family: "thread"
+    description: "Thread mesh devices over 802.15.4"
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [2000, 3000]
+    common_modulations: ["oqpsk", "dsss", "psk"]
+    common_subtypes:
+      - "border_router"
+      - "sensor"
+      - "smart_home"
+
+  - protocol_family: "lora"
+    description: "LoRa / LoRaWAN chirp spread spectrum devices"
+    expected_band_mhz:
+      - [433000, 435000]
+      - [863000, 870000]
+      - [902000, 928000]
+    expected_bw_khz: [125, 250, 500]
+    common_modulations: ["css", "chirp_spread_spectrum"]
+    common_subtypes:
+      - "gateway"
+      - "meter"
+      - "sensor"
+      - "tracker"
+
+  - protocol_family: "subghz_ook"
+    description: "Low-rate sub-GHz OOK/ASK devices"
+    expected_band_mhz:
+      - [300000, 350000]
+      - [390000, 470000]
+      - [860000, 930000]
+    expected_bw_khz: [10, 50, 100, 300]
+    common_modulations: ["ook", "ask"]
+    common_subtypes:
+      - "remote"
+      - "doorbell"
+      - "weather_sensor"
+      - "garage_remote"
+      - "simple_alarm_sensor"
+
+  - protocol_family: "subghz_fsk"
+    description: "Sub-GHz narrowband FSK telemetry and controls"
+    expected_band_mhz:
+      - [390000, 470000]
+      - [860000, 930000]
+    expected_bw_khz: [25, 50, 100, 200, 300]
+    common_modulations: ["fsk", "gfsk", "2fsk"]
+    common_subtypes:
+      - "meter"
+      - "alarm_sensor"
+      - "industrial_sensor"
+      - "remote_control"
+
+  - protocol_family: "wireless_mbus"
+    description: "Wireless M-Bus metering devices"
+    expected_band_mhz:
+      - [433000, 435000]
+      - [868000, 870000]
+    expected_bw_khz: [50, 100, 200]
+    common_modulations: ["fsk", "2fsk", "gmsk"]
+    common_subtypes:
+      - "water_meter"
+      - "gas_meter"
+      - "heat_meter"
+      - "utility_meter"
+
+  - protocol_family: "proprietary_iot"
+    description: "Unknown or vendor-specific low-power RF"
+    expected_band_mhz:
+      - [2400, 2485]
+      - [300000, 350000]
+      - [390000, 470000]
+      - [860000, 930000]
+    expected_bw_khz: [20, 50, 100, 250, 500, 1000, 2000]
+    common_modulations: ["ook", "ask", "fsk", "gfsk", "unknown"]
+    common_subtypes:
+      - "unknown_sensor"
+      - "unknown_control"
+      - "unknown_appliance"
+
+device_profiles:
+  - device: "WiFi Access Point"
+    category: "Router"
+    protocol_family: "wifi"
+    protocol_subtypes: ["access_point"]
+    vendor: null
+    expected_band_mhz:
+      - [2400, 2500]
+      - [5150, 5895]
+    expected_bw_khz: [20000, 40000, 80000, 160000]
+    expected_channels: [1, 6, 11, 36, 40, 44, 48, 149, 153, 157, 161]
+    modulation_types: ["ofdm", "ofdm_wideband"]
+    burst_interval_ms: [50, 500]
+    burst_duration_ms: [1, 20]
+    signal_traits:
+      - "persistent_presence"
+      - "wideband"
+      - "beaconing"
+    redteam_surface:
+      - "network_entrypoint"
+      - "management_plane"
+      - "wifi_infrastructure"
+
+  - device: "WiFi IP Camera"
+    category: "Camera"
+    protocol_family: "wifi"
+    protocol_subtypes: ["camera", "iot"]
+    vendor: null
+    expected_band_mhz:
+      - [2400, 2500]
+    expected_bw_khz: [20000, 40000]
+    modulation_types: ["ofdm", "ofdm_wideband"]
+    burst_interval_ms: [20, 300]
+    burst_duration_ms: [2, 40]
+    signal_traits:
+      - "uplink_bursty"
+      - "video_streaming"
+      - "persistent_association"
+    redteam_surface:
+      - "video_surveillance"
+      - "credential_surface"
+      - "iot_exposure"
+
+  - device: "WiFi Smart Plug"
+    category: "Smart Plug"
+    protocol_family: "wifi"
+    protocol_subtypes: ["iot"]
+    vendor: null
+    expected_band_mhz:
+      - [2400, 2500]
+    expected_bw_khz: [20000]
+    modulation_types: ["ofdm"]
+    burst_interval_ms: [200, 30000]
+    burst_duration_ms: [1, 10]
+    signal_traits:
+      - "low_duty_cycle"
+      - "control_bursts"
+      - "iot_keepalive"
+    redteam_surface:
+      - "power_control"
+      - "home_automation"
+      - "credential_surface"
+
+  - device: "WiFi Robot Vacuum"
+    category: "Appliance"
+    protocol_family: "wifi"
+    protocol_subtypes: ["smart_appliance", "iot"]
+    vendor: null
+    expected_band_mhz:
+      - [2400, 2500]
+    expected_bw_khz: [20000, 40000]
+    modulation_types: ["ofdm"]
+    burst_interval_ms: [50, 2000]
+    burst_duration_ms: [2, 30]
+    signal_traits:
+      - "telemetry_bursts"
+      - "cloud_connected"
+      - "session_activity"
+    redteam_surface:
+      - "mobile_app_surface"
+      - "home_mapping_data"
+      - "iot_control_plane"
+
+  - device: "WiFi Smart Thermostat"
+    category: "Thermostat"
+    protocol_family: "wifi"
+    protocol_subtypes: ["iot", "thermostat", "smart_appliance"]
+    vendor: null
+    expected_band_mhz:
+      - [2400, 2500]
+    expected_bw_khz: [20000]
+    modulation_types: ["ofdm"]
+    burst_interval_ms: [200, 60000]
+    burst_duration_ms: [1, 12]
+    signal_traits:
+      - "control_bursts"
+      - "telemetry_keepalive"
+      - "cloud_connected"
+    redteam_surface:
+      - "hvac_control"
+      - "occupancy_inference"
+      - "credential_surface"
+
+  - device: "BLE Asset Tracker"
+    category: "Tracker"
+    protocol_family: "bluetooth_le"
+    protocol_subtypes: ["tracker", "beacon"]
+    vendor: null
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [1000, 2000]
+    modulation_types: ["gfsk", "fsk"]
+    burst_interval_ms: [500, 5000]
+    burst_duration_ms: [2, 8]
+    signal_traits:
+      - "advertising_bursts"
+      - "mobility"
+      - "short_packets"
+    redteam_surface:
+      - "location_tracking"
+      - "privacy_exposure"
+      - "device_presence"
+
+  - device: "BLE Smart Lock"
+    category: "Lock"
+    protocol_family: "bluetooth_le"
+    protocol_subtypes: ["smart_lock"]
+    vendor: null
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [1000, 2000]
+    modulation_types: ["gfsk"]
+    burst_interval_ms: [100, 3000]
+    burst_duration_ms: [2, 12]
+    signal_traits:
+      - "command_response"
+      - "mobile_unlock"
+      - "presence_detection"
+    redteam_surface:
+      - "physical_access"
+      - "credential_surface"
+      - "mobile_auth"
+
+  - device: "Bluetooth Speaker"
+    category: "Audio"
+    protocol_family: "bluetooth_classic"
+    protocol_subtypes: ["audio"]
+    vendor: null
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [1000, 2000]
+    modulation_types: ["gfsk", "fsk"]
+    burst_interval_ms: [10, 200]
+    burst_duration_ms: [2, 20]
+    signal_traits:
+      - "continuous_audio_session"
+      - "user_presence"
+    redteam_surface:
+      - "audio_sink"
+      - "nearby_presence"
+      - "pairing_surface"
+
+  - device: "BLE Smart Watch"
+    category: "Wearable"
+    protocol_family: "bluetooth_le"
+    protocol_subtypes: ["wearable", "sensor", "phone_accessory"]
+    vendor: null
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [1000, 2000]
+    modulation_types: ["gfsk", "fsk"]
+    burst_interval_ms: [100, 5000]
+    burst_duration_ms: [2, 10]
+    signal_traits:
+      - "advertising_bursts"
+      - "personal_device"
+      - "paired_accessory"
+    redteam_surface:
+      - "body_area_network"
+      - "notification_leakage"
+      - "device_presence"
+
+  - device: "BLE Smartphone"
+    category: "Phone"
+    protocol_family: "bluetooth_le"
+    protocol_subtypes: ["phone_accessory", "wearable"]
+    vendor: null
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [1000, 2000]
+    modulation_types: ["gfsk", "fsk"]
+    burst_interval_ms: [20, 3000]
+    burst_duration_ms: [2, 12]
+    signal_traits:
+      - "advertising_bursts"
+      - "personal_device"
+      - "paired_accessory"
+    redteam_surface:
+      - "mobile_presence"
+      - "device_tracking"
+      - "paired_surface"
+
+  - device: "BLE Earbuds"
+    category: "Audio"
+    protocol_family: "bluetooth_le"
+    protocol_subtypes: ["phone_accessory", "audio"]
+    vendor: null
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [1000, 2000]
+    modulation_types: ["gfsk", "fsk"]
+    burst_interval_ms: [20, 2000]
+    burst_duration_ms: [2, 10]
+    signal_traits:
+      - "paired_accessory"
+      - "audio_accessory"
+      - "advertising_bursts"
+    redteam_surface:
+      - "audio_sink"
+      - "nearby_presence"
+      - "pairing_surface"
+
+  - device: "BLE Smart TV"
+    category: "Entertainment"
+    protocol_family: "bluetooth_le"
+    protocol_subtypes: ["iot", "streaming_audio"]
+    vendor: null
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [1000, 2000]
+    modulation_types: ["gfsk", "fsk"]
+    burst_interval_ms: [100, 10000]
+    burst_duration_ms: [2, 14]
+    signal_traits:
+      - "stationary_device"
+      - "control_presence"
+      - "paired_accessory"
+    redteam_surface:
+      - "media_control"
+      - "nearby_presence"
+      - "consumer_iot"
+
+  - device: "BLE Set-Top Box"
+    category: "Entertainment"
+    protocol_family: "bluetooth_le"
+    protocol_subtypes: ["iot"]
+    vendor: null
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [1000, 2000]
+    modulation_types: ["gfsk", "fsk"]
+    burst_interval_ms: [100, 10000]
+    burst_duration_ms: [2, 14]
+    signal_traits:
+      - "stationary_device"
+      - "remote_pairing"
+      - "control_presence"
+    redteam_surface:
+      - "media_control"
+      - "consumer_iot"
+      - "pairing_surface"
+
+  - device: "Zigbee Motion Sensor"
+    category: "Sensor"
+    protocol_family: "zigbee"
+    protocol_subtypes: ["motion_sensor"]
+    vendor: null
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [2000, 3000]
+    expected_channels: [11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26]
+    modulation_types: ["oqpsk", "dsss", "psk"]
+    burst_interval_ms: [1000, 600000]
+    burst_duration_ms: [4, 20]
+    signal_traits:
+      - "event_driven"
+      - "mesh"
+      - "short_bursts"
+    redteam_surface:
+      - "occupancy_monitoring"
+      - "alarm_triggering"
+      - "home_automation"
+
+  - device: "Zigbee Door Sensor"
+    category: "Sensor"
+    protocol_family: "zigbee"
+    protocol_subtypes: ["door_sensor"]
+    vendor: null
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [2000, 3000]
+    expected_channels: [11, 12, 13, 14, 15, 20, 25]
+    modulation_types: ["oqpsk", "dsss"]
+    burst_interval_ms: [1000, 600000]
+    burst_duration_ms: [4, 20]
+    signal_traits:
+      - "event_driven"
+      - "mesh"
+      - "contact_change_bursts"
+    redteam_surface:
+      - "perimeter_monitoring"
+      - "alarm_triggering"
+      - "entry_state"
+
+  - device: "Zigbee Smart Bulb"
+    category: "Lighting"
+    protocol_family: "zigbee"
+    protocol_subtypes: ["smart_bulb"]
+    vendor: null
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [2000, 3000]
+    expected_channels: [11, 15, 20, 25]
+    modulation_types: ["oqpsk", "dsss"]
+    burst_interval_ms: [100, 60000]
+    burst_duration_ms: [4, 20]
+    signal_traits:
+      - "mesh"
+      - "periodic_keepalive"
+      - "control_response"
+    redteam_surface:
+      - "lighting_control"
+      - "mesh_presence"
+      - "iot_exposure"
+
+  - device: "Zigbee Smart Switch"
+    category: "Switch"
+    protocol_family: "zigbee"
+    protocol_subtypes: ["switch"]
+    vendor: null
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [2000, 3000]
+    modulation_types: ["oqpsk", "dsss"]
+    burst_interval_ms: [100, 120000]
+    burst_duration_ms: [4, 20]
+    signal_traits:
+      - "event_driven"
+      - "mesh"
+      - "control_burst"
+    redteam_surface:
+      - "automation_control"
+      - "scene_trigger"
+      - "iot_exposure"
+
+  - device: "Zigbee Smart Plug"
+    category: "Smart Plug"
+    protocol_family: "zigbee"
+    protocol_subtypes: ["smart_plug", "switch"]
+    vendor: null
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [2000, 3000]
+    expected_channels: [11, 15, 20, 25]
+    modulation_types: ["oqpsk", "dsss"]
+    burst_interval_ms: [200, 120000]
+    burst_duration_ms: [4, 20]
+    signal_traits:
+      - "mesh"
+      - "power_control"
+      - "control_response"
+    redteam_surface:
+      - "power_control"
+      - "home_automation"
+      - "iot_exposure"
+
+  - device: "Zigbee Hub"
+    category: "Hub"
+    protocol_family: "zigbee"
+    protocol_subtypes: ["hub", "coordinator", "gateway"]
+    vendor: null
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [2000, 3000]
+    expected_channels: [11, 15, 20, 25]
+    modulation_types: ["oqpsk", "dsss"]
+    burst_interval_ms: [50, 5000]
+    burst_duration_ms: [4, 20]
+    signal_traits:
+      - "mesh_infrastructure"
+      - "persistent_presence"
+      - "control_plane"
+    redteam_surface:
+      - "home_automation"
+      - "mesh_control_plane"
+      - "iot_exposure"
+
+  - device: "Zigbee Water Leak Sensor"
+    category: "Sensor"
+    protocol_family: "zigbee"
+    protocol_subtypes: ["water_leak_sensor", "leak_sensor"]
+    vendor: null
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [2000, 3000]
+    expected_channels: [11, 15, 20, 25]
+    modulation_types: ["oqpsk", "dsss"]
+    burst_interval_ms: [1000, 600000]
+    burst_duration_ms: [4, 20]
+    signal_traits:
+      - "event_driven"
+      - "alarm_bursts"
+      - "mesh"
+    redteam_surface:
+      - "environmental_monitoring"
+      - "alarm_triggering"
+      - "iot_exposure"
+
+  - device: "Zigbee Smart Blind"
+    category: "Blind"
+    protocol_family: "zigbee"
+    protocol_subtypes: ["smart_blind", "window_covering"]
+    vendor: null
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [2000, 3000]
+    expected_channels: [11, 15, 20, 25]
+    modulation_types: ["oqpsk", "dsss"]
+    burst_interval_ms: [100, 120000]
+    burst_duration_ms: [4, 24]
+    signal_traits:
+      - "control_burst"
+      - "mesh"
+      - "actuator"
+    redteam_surface:
+      - "physical_environment_control"
+      - "occupancy_inference"
+      - "iot_exposure"
+
+  - device: "LoRa Sensor"
+    category: "Sensor"
+    protocol_family: "lora"
+    protocol_subtypes: ["sensor"]
+    vendor: null
+    expected_band_mhz:
+      - [433000, 435000]
+      - [863000, 870000]
+      - [902000, 928000]
+    expected_bw_khz: [125, 250, 500]
+    modulation_types: ["css", "chirp_spread_spectrum"]
+    burst_interval_ms: [10000, 3600000]
+    burst_duration_ms: [20, 2000]
+    signal_traits:
+      - "long_range"
+      - "low_duty_cycle"
+      - "telemetry_uplink"
+    redteam_surface:
+      - "remote_telemetry"
+      - "environmental_monitoring"
+      - "asset_visibility"
+
+  - device: "Sub-GHz Remote Control"
+    category: "Remote"
+    protocol_family: "subghz_ook"
+    protocol_subtypes: ["remote", "garage_remote"]
+    vendor: null
+    expected_band_mhz:
+      - [390000, 470000]
+      - [860000, 930000]
+    expected_bw_khz: [10, 50, 100, 300]
+    modulation_types: ["ook", "ask"]
+    burst_interval_ms: [50, 5000]
+    burst_duration_ms: [5, 200]
+    signal_traits:
+      - "button_press_burst"
+      - "short_range"
+      - "repeat_transmission"
+    redteam_surface:
+      - "physical_access"
+      - "replay_risk"
+      - "entry_control"
+
+  - device: "Wireless Meter"
+    category: "Utility"
+    protocol_family: "wireless_mbus"
+    protocol_subtypes: ["utility_meter", "water_meter", "gas_meter", "heat_meter"]
+    vendor: null
+    expected_band_mhz:
+      - [433000, 435000]
+      - [868000, 870000]
+    expected_bw_khz: [50, 100, 200]
+    modulation_types: ["fsk", "2fsk", "gmsk"]
+    burst_interval_ms: [10000, 3600000]
+    burst_duration_ms: [10, 500]
+    signal_traits:
+      - "scheduled_telemetry"
+      - "narrowband"
+      - "utility_reporting"
+    redteam_surface:
+      - "consumption_telemetry"
+      - "occupancy_inference"
+      - "infrastructure_visibility"
+
+product_profiles:
+  - product_name: "Apple AirTag"
+    vendor: "apple"
+    device: "BLE Asset Tracker"
+    category: "Tracker"
+    protocol_family: "bluetooth_le"
+    protocol_subtypes: ["tracker", "beacon"]
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [1000, 2000]
+    modulation_types: ["gfsk"]
+    burst_interval_ms: [1500, 3000]
+    burst_duration_ms: [2, 6]
+    redteam_surface:
+      - "location_tracking"
+      - "privacy_exposure"
+
+  - product_name: "Apple Watch"
+    vendor: "apple"
+    device: "BLE Smart Watch"
+    category: "Wearable"
+    protocol_family: "bluetooth_le"
+    protocol_subtypes: ["wearable", "sensor", "phone_accessory"]
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [1000, 2000]
+    modulation_types: ["gfsk"]
+    burst_interval_ms: [100, 3000]
+    burst_duration_ms: [2, 8]
+    redteam_surface:
+      - "body_area_network"
+      - "device_presence"
+
+  - product_name: "iPhone"
+    vendor: "apple"
+    device: "BLE Smartphone"
+    category: "Phone"
+    protocol_family: "bluetooth_le"
+    protocol_subtypes: ["phone_accessory"]
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [1000, 2000]
+    modulation_types: ["gfsk"]
+    burst_interval_ms: [20, 2000]
+    burst_duration_ms: [2, 10]
+    redteam_surface:
+      - "mobile_presence"
+      - "paired_surface"
+
+  - product_name: "Samsung Galaxy Phone"
+    vendor: "samsung"
+    device: "BLE Smartphone"
+    category: "Phone"
+    protocol_family: "bluetooth_le"
+    protocol_subtypes: ["phone_accessory"]
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [1000, 2000]
+    modulation_types: ["gfsk"]
+    burst_interval_ms: [20, 2000]
+    burst_duration_ms: [2, 10]
+    redteam_surface:
+      - "mobile_presence"
+      - "paired_surface"
+
+  - product_name: "Google Pixel Phone"
+    vendor: "google"
+    device: "BLE Smartphone"
+    category: "Phone"
+    protocol_family: "bluetooth_le"
+    protocol_subtypes: ["phone_accessory"]
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [1000, 2000]
+    modulation_types: ["gfsk"]
+    burst_interval_ms: [20, 2000]
+    burst_duration_ms: [2, 10]
+    redteam_surface:
+      - "mobile_presence"
+      - "paired_surface"
+
+  - product_name: "Samsung Galaxy Watch"
+    vendor: "samsung"
+    device: "BLE Smart Watch"
+    category: "Wearable"
+    protocol_family: "bluetooth_le"
+    protocol_subtypes: ["wearable", "sensor"]
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [1000, 2000]
+    modulation_types: ["gfsk"]
+    burst_interval_ms: [100, 4000]
+    burst_duration_ms: [2, 8]
+    redteam_surface:
+      - "body_area_network"
+      - "device_presence"
+
+  - product_name: "Fitbit Tracker"
+    vendor: "fitbit"
+    device: "BLE Smart Watch"
+    category: "Wearable"
+    protocol_family: "bluetooth_le"
+    protocol_subtypes: ["wearable", "sensor"]
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [1000, 2000]
+    modulation_types: ["gfsk"]
+    burst_interval_ms: [500, 5000]
+    burst_duration_ms: [2, 8]
+    redteam_surface:
+      - "body_area_network"
+      - "health_telemetry"
+
+  - product_name: "Garmin Watch"
+    vendor: "garmin"
+    device: "BLE Smart Watch"
+    category: "Wearable"
+    protocol_family: "bluetooth_le"
+    protocol_subtypes: ["wearable", "sensor"]
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [1000, 2000]
+    modulation_types: ["gfsk"]
+    burst_interval_ms: [500, 5000]
+    burst_duration_ms: [2, 8]
+    redteam_surface:
+      - "body_area_network"
+      - "location_telemetry"
+
+  - product_name: "Apple AirPods"
+    vendor: "apple"
+    device: "BLE Earbuds"
+    category: "Audio"
+    protocol_family: "bluetooth_le"
+    protocol_subtypes: ["audio", "phone_accessory"]
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [1000, 2000]
+    modulation_types: ["gfsk"]
+    burst_interval_ms: [20, 1500]
+    burst_duration_ms: [2, 8]
+    redteam_surface:
+      - "audio_sink"
+      - "nearby_presence"
+
+  - product_name: "Samsung Galaxy Buds"
+    vendor: "samsung"
+    device: "BLE Earbuds"
+    category: "Audio"
+    protocol_family: "bluetooth_le"
+    protocol_subtypes: ["audio", "phone_accessory"]
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [1000, 2000]
+    modulation_types: ["gfsk"]
+    burst_interval_ms: [20, 1500]
+    burst_duration_ms: [2, 8]
+    redteam_surface:
+      - "audio_sink"
+      - "nearby_presence"
+
+  - product_name: "JBL Bluetooth Speaker"
+    vendor: "jbl"
+    device: "Bluetooth Speaker"
+    category: "Audio"
+    protocol_family: "bluetooth_classic"
+    protocol_subtypes: ["audio"]
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [1000, 2000]
+    modulation_types: ["gfsk", "fsk"]
+    burst_interval_ms: [10, 200]
+    burst_duration_ms: [2, 20]
+    redteam_surface:
+      - "audio_sink"
+      - "nearby_presence"
+
+  - product_name: "Bose Speaker"
+    vendor: "bose"
+    device: "Bluetooth Speaker"
+    category: "Audio"
+    protocol_family: "bluetooth_classic"
+    protocol_subtypes: ["audio"]
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [1000, 2000]
+    modulation_types: ["gfsk", "fsk"]
+    burst_interval_ms: [10, 200]
+    burst_duration_ms: [2, 20]
+    redteam_surface:
+      - "audio_sink"
+      - "nearby_presence"
+
+  - product_name: "Samsung Smart TV"
+    vendor: "samsung"
+    device: "BLE Smart TV"
+    category: "Entertainment"
+    protocol_family: "bluetooth_le"
+    protocol_subtypes: ["iot"]
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [1000, 2000]
+    modulation_types: ["gfsk", "fsk"]
+    burst_interval_ms: [100, 10000]
+    burst_duration_ms: [2, 14]
+    redteam_surface:
+      - "media_control"
+      - "consumer_iot"
+
+  - product_name: "LG Smart TV"
+    vendor: "lg"
+    device: "BLE Smart TV"
+    category: "Entertainment"
+    protocol_family: "bluetooth_le"
+    protocol_subtypes: ["iot"]
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [1000, 2000]
+    modulation_types: ["gfsk", "fsk"]
+    burst_interval_ms: [100, 10000]
+    burst_duration_ms: [2, 14]
+    redteam_surface:
+      - "media_control"
+      - "consumer_iot"
+
+  - product_name: "Sony Bravia TV"
+    vendor: "sony"
+    device: "BLE Smart TV"
+    category: "Entertainment"
+    protocol_family: "bluetooth_le"
+    protocol_subtypes: ["iot"]
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [1000, 2000]
+    modulation_types: ["gfsk", "fsk"]
+    burst_interval_ms: [100, 10000]
+    burst_duration_ms: [2, 14]
+    redteam_surface:
+      - "media_control"
+      - "consumer_iot"
+
+  - product_name: "Orange TV Decoder"
+    vendor: "orange"
+    device: "BLE Set-Top Box"
+    category: "Entertainment"
+    protocol_family: "bluetooth_le"
+    protocol_subtypes: ["iot"]
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [1000, 2000]
+    modulation_types: ["gfsk", "fsk"]
+    burst_interval_ms: [100, 10000]
+    burst_duration_ms: [2, 14]
+    redteam_surface:
+      - "media_control"
+      - "consumer_iot"
+      - "pairing_surface"
+
+  - product_name: "Tile Tracker"
+    vendor: "tile"
+    device: "BLE Asset Tracker"
+    category: "Tracker"
+    protocol_family: "bluetooth_le"
+    protocol_subtypes: ["tracker", "beacon"]
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [1000, 2000]
+    modulation_types: ["gfsk"]
+    burst_interval_ms: [800, 3000]
+    burst_duration_ms: [2, 8]
+    redteam_surface:
+      - "location_tracking"
+      - "privacy_exposure"
+
+  - product_name: "Philips Hue Bulb"
+    vendor: "philips"
+    device: "Zigbee Smart Bulb"
+    category: "Lighting"
+    protocol_family: "zigbee"
+    protocol_subtypes: ["smart_bulb"]
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [2000, 3000]
+    modulation_types: ["oqpsk", "dsss"]
+    burst_interval_ms: [1000, 60000]
+    burst_duration_ms: [4, 16]
+    redteam_surface:
+      - "lighting_control"
+      - "mesh_presence"
+
+  - product_name: "Aqara Door Sensor"
+    vendor: "xiaomi"
+    device: "Zigbee Door Sensor"
+    category: "Sensor"
+    protocol_family: "zigbee"
+    protocol_subtypes: ["door_sensor"]
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [2000, 3000]
+    modulation_types: ["oqpsk", "dsss"]
+    burst_interval_ms: [1000, 600000]
+    burst_duration_ms: [4, 20]
+    redteam_surface:
+      - "perimeter_monitoring"
+      - "entry_state"
+
+  - product_name: "Aqara Motion Sensor"
+    vendor: "xiaomi"
+    device: "Zigbee Motion Sensor"
+    category: "Sensor"
+    protocol_family: "zigbee"
+    protocol_subtypes: ["motion_sensor"]
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [2000, 3000]
+    modulation_types: ["oqpsk", "dsss"]
+    burst_interval_ms: [1000, 600000]
+    burst_duration_ms: [4, 20]
+    redteam_surface:
+      - "occupancy_monitoring"
+      - "alarm_triggering"
+
+  - product_name: "TP-Link WiFi Router"
+    vendor: "tp-link"
+    device: "WiFi Access Point"
+    category: "Router"
+    protocol_family: "wifi"
+    protocol_subtypes: ["access_point"]
+    expected_band_mhz:
+      - [2400, 2500]
+      - [5150, 5895]
+    expected_bw_khz: [20000, 40000, 80000]
+    modulation_types: ["ofdm", "ofdm_wideband"]
+    burst_interval_ms: [50, 500]
+    burst_duration_ms: [1, 20]
+    redteam_surface:
+      - "network_entrypoint"
+      - "management_plane"
+
+  - product_name: "Xiaomi Robot Vacuum"
+    vendor: "xiaomi"
+    device: "WiFi Robot Vacuum"
+    category: "Appliance"
+    protocol_family: "wifi"
+    protocol_subtypes: ["smart_appliance", "iot"]
+    expected_band_mhz:
+      - [2400, 2500]
+    expected_bw_khz: [20000, 40000]
+    modulation_types: ["ofdm"]
+    burst_interval_ms: [50, 2000]
+    burst_duration_ms: [2, 30]
+    redteam_surface:
+      - "mobile_app_surface"
+      - "home_mapping_data"
+
+  - product_name: "Xiaomi Smart Plug"
+    vendor: "xiaomi"
+    device: "WiFi Smart Plug"
+    category: "Smart Plug"
+    protocol_family: "wifi"
+    protocol_subtypes: ["iot"]
+    expected_band_mhz:
+      - [2400, 2500]
+    expected_bw_khz: [20000]
+    modulation_types: ["ofdm"]
+    burst_interval_ms: [500, 30000]
+    burst_duration_ms: [1, 10]
+    redteam_surface:
+      - "power_control"
+      - "credential_surface"
+
+  - product_name: "Ring Indoor Camera"
+    vendor: "amazon"
+    device: "WiFi IP Camera"
+    category: "Camera"
+    protocol_family: "wifi"
+    protocol_subtypes: ["camera", "iot"]
+    expected_band_mhz:
+      - [2400, 2500]
+    expected_bw_khz: [20000, 40000]
+    modulation_types: ["ofdm"]
+    burst_interval_ms: [20, 300]
+    burst_duration_ms: [2, 40]
+    redteam_surface:
+      - "video_surveillance"
+      - "credential_surface"
+
+  - product_name: "Netatmo Indoor Camera"
+    vendor: "netatmo"
+    device: "WiFi IP Camera"
+    category: "Camera"
+    protocol_family: "wifi"
+    protocol_subtypes: ["camera", "iot"]
+    expected_band_mhz:
+      - [2400, 2500]
+    expected_bw_khz: [20000, 40000]
+    modulation_types: ["ofdm"]
+    burst_interval_ms: [20, 300]
+    burst_duration_ms: [2, 40]
+    redteam_surface:
+      - "video_surveillance"
+      - "credential_surface"
+
+  - product_name: "Shelly Smart Plug"
+    vendor: "shelly"
+    device: "WiFi Smart Plug"
+    category: "Smart Plug"
+    protocol_family: "wifi"
+    protocol_subtypes: ["iot"]
+    expected_band_mhz:
+      - [2400, 2500]
+    expected_bw_khz: [20000]
+    modulation_types: ["ofdm"]
+    burst_interval_ms: [500, 30000]
+    burst_duration_ms: [1, 10]
+    redteam_surface:
+      - "power_control"
+      - "credential_surface"
+
+  - product_name: "tado Smart Thermostat"
+    vendor: "tado"
+    device: "WiFi Smart Thermostat"
+    category: "Thermostat"
+    protocol_family: "wifi"
+    protocol_subtypes: ["iot", "thermostat", "smart_appliance"]
+    expected_band_mhz:
+      - [2400, 2500]
+    expected_bw_khz: [20000]
+    modulation_types: ["ofdm"]
+    burst_interval_ms: [200, 60000]
+    burst_duration_ms: [1, 12]
+    redteam_surface:
+      - "hvac_control"
+      - "occupancy_inference"
+
+  - product_name: "Nuki Smart Lock"
+    vendor: "nuki"
+    device: "BLE Smart Lock"
+    category: "Lock"
+    protocol_family: "bluetooth_le"
+    protocol_subtypes: ["smart_lock"]
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [1000, 2000]
+    modulation_types: ["gfsk"]
+    burst_interval_ms: [100, 3000]
+    burst_duration_ms: [2, 12]
+    redteam_surface:
+      - "physical_access"
+      - "credential_surface"
+
+  - product_name: "IKEA Tradfri Smart Plug"
+    vendor: "ikea"
+    device: "Zigbee Smart Plug"
+    category: "Smart Plug"
+    protocol_family: "zigbee"
+    protocol_subtypes: ["smart_plug", "switch"]
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [2000, 3000]
+    modulation_types: ["oqpsk", "dsss"]
+    burst_interval_ms: [500, 120000]
+    burst_duration_ms: [4, 20]
+    redteam_surface:
+      - "power_control"
+      - "iot_exposure"
+
+  - product_name: "IKEA TRETAKT Smart Plug"
+    vendor: "ikea"
+    device: "Zigbee Smart Plug"
+    category: "Smart Plug"
+    protocol_family: "zigbee"
+    protocol_subtypes: ["smart_plug", "switch"]
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [2000, 3000]
+    modulation_types: ["oqpsk", "dsss"]
+    burst_interval_ms: [500, 120000]
+    burst_duration_ms: [4, 20]
+    redteam_surface:
+      - "power_control"
+      - "iot_exposure"
+
+  - product_name: "IKEA TRADFRI LED Bulb"
+    vendor: "ikea"
+    device: "Zigbee Smart Bulb"
+    category: "Lighting"
+    protocol_family: "zigbee"
+    protocol_subtypes: ["smart_bulb", "lighting"]
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [2000, 3000]
+    modulation_types: ["oqpsk", "dsss"]
+    burst_interval_ms: [100, 60000]
+    burst_duration_ms: [4, 16]
+    redteam_surface:
+      - "lighting_control"
+      - "mesh_presence"
+      - "iot_exposure"
+
+  - product_name: "IKEA STYRBAR Remote"
+    vendor: "ikea"
+    device: "Zigbee Smart Switch"
+    category: "Remote"
+    protocol_family: "zigbee"
+    protocol_subtypes: ["switch", "remote_control"]
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [2000, 3000]
+    modulation_types: ["oqpsk", "dsss"]
+    burst_interval_ms: [100, 120000]
+    burst_duration_ms: [4, 16]
+    redteam_surface:
+      - "automation_control"
+      - "scene_trigger"
+      - "iot_exposure"
+
+  - product_name: "IKEA RODRET Dimmer"
+    vendor: "ikea"
+    device: "Zigbee Smart Switch"
+    category: "Remote"
+    protocol_family: "zigbee"
+    protocol_subtypes: ["switch", "dimmer", "remote_control"]
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [2000, 3000]
+    modulation_types: ["oqpsk", "dsss"]
+    burst_interval_ms: [100, 120000]
+    burst_duration_ms: [4, 16]
+    redteam_surface:
+      - "automation_control"
+      - "scene_trigger"
+      - "iot_exposure"
+
+  - product_name: "IKEA PARASOLL Door Sensor"
+    vendor: "ikea"
+    device: "Zigbee Door Sensor"
+    category: "Sensor"
+    protocol_family: "zigbee"
+    protocol_subtypes: ["door_sensor", "window_sensor"]
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [2000, 3000]
+    modulation_types: ["oqpsk", "dsss"]
+    burst_interval_ms: [1000, 600000]
+    burst_duration_ms: [4, 20]
+    redteam_surface:
+      - "perimeter_monitoring"
+      - "entry_state"
+      - "alarm_triggering"
+
+  - product_name: "IKEA VALLHORN Motion Sensor"
+    vendor: "ikea"
+    device: "Zigbee Motion Sensor"
+    category: "Sensor"
+    protocol_family: "zigbee"
+    protocol_subtypes: ["motion_sensor"]
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [2000, 3000]
+    modulation_types: ["oqpsk", "dsss"]
+    burst_interval_ms: [1000, 600000]
+    burst_duration_ms: [4, 20]
+    redteam_surface:
+      - "occupancy_monitoring"
+      - "alarm_triggering"
+      - "home_automation"
+
+  - product_name: "IKEA BADRING Water Leak Sensor"
+    vendor: "ikea"
+    device: "Zigbee Water Leak Sensor"
+    category: "Sensor"
+    protocol_family: "zigbee"
+    protocol_subtypes: ["water_leak_sensor", "leak_sensor"]
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [2000, 3000]
+    modulation_types: ["oqpsk", "dsss"]
+    burst_interval_ms: [1000, 600000]
+    burst_duration_ms: [4, 20]
+    redteam_surface:
+      - "environmental_monitoring"
+      - "alarm_triggering"
+      - "home_automation"
+
+  - product_name: "IKEA FYRTUR Smart Blind"
+    vendor: "ikea"
+    device: "Zigbee Smart Blind"
+    category: "Blind"
+    protocol_family: "zigbee"
+    protocol_subtypes: ["smart_blind", "window_covering"]
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [2000, 3000]
+    modulation_types: ["oqpsk", "dsss"]
+    burst_interval_ms: [100, 120000]
+    burst_duration_ms: [4, 24]
+    redteam_surface:
+      - "physical_environment_control"
+      - "occupancy_inference"
+      - "iot_exposure"
+
+  - product_name: "IKEA DIRIGERA Hub"
+    vendor: "ikea"
+    device: "Zigbee Hub"
+    category: "Hub"
+    protocol_family: "zigbee"
+    protocol_subtypes: ["hub", "coordinator", "gateway"]
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [2000, 3000]
+    modulation_types: ["oqpsk", "dsss"]
+    burst_interval_ms: [50, 5000]
+    burst_duration_ms: [4, 20]
+    redteam_surface:
+      - "mesh_control_plane"
+      - "home_automation"
+      - "iot_exposure"
+
+  - product_name: "Aqara Hub"
+    vendor: "aqara"
+    device: "Zigbee Hub"
+    category: "Hub"
+    protocol_family: "zigbee"
+    protocol_subtypes: ["hub", "coordinator", "gateway"]
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [2000, 3000]
+    modulation_types: ["oqpsk", "dsss"]
+    burst_interval_ms: [50, 5000]
+    burst_duration_ms: [4, 20]
+    redteam_surface:
+      - "mesh_control_plane"
+      - "home_automation"
+      - "iot_exposure"
+
+  - product_name: "Aqara Smart Plug"
+    vendor: "aqara"
+    device: "Zigbee Smart Plug"
+    category: "Smart Plug"
+    protocol_family: "zigbee"
+    protocol_subtypes: ["smart_plug", "switch"]
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [2000, 3000]
+    modulation_types: ["oqpsk", "dsss"]
+    burst_interval_ms: [500, 120000]
+    burst_duration_ms: [4, 20]
+    redteam_surface:
+      - "power_control"
+      - "iot_exposure"
+
+  - product_name: "Philips Hue Bridge"
+    vendor: "philips"
+    device: "Zigbee Hub"
+    category: "Hub"
+    protocol_family: "zigbee"
+    protocol_subtypes: ["hub", "coordinator", "gateway"]
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [2000, 3000]
+    modulation_types: ["oqpsk", "dsss"]
+    burst_interval_ms: [50, 5000]
+    burst_duration_ms: [4, 20]
+    redteam_surface:
+      - "lighting_control"
+      - "mesh_control_plane"
+      - "iot_exposure"
+
+  - product_name: "Philips Hue Smart Plug"
+    vendor: "philips"
+    device: "Zigbee Smart Plug"
+    category: "Smart Plug"
+    protocol_family: "zigbee"
+    protocol_subtypes: ["smart_plug", "switch"]
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [2000, 3000]
+    modulation_types: ["oqpsk", "dsss"]
+    burst_interval_ms: [500, 120000]
+    burst_duration_ms: [4, 20]
+    redteam_surface:
+      - "power_control"
+      - "iot_exposure"
+
+  - product_name: "Tuya Zigbee Door Sensor"
+    vendor: "tuya"
+    device: "Zigbee Door Sensor"
+    category: "Sensor"
+    protocol_family: "zigbee"
+    protocol_subtypes: ["door_sensor", "window_sensor"]
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [2000, 3000]
+    modulation_types: ["oqpsk", "dsss"]
+    burst_interval_ms: [1000, 600000]
+    burst_duration_ms: [4, 20]
+    redteam_surface:
+      - "perimeter_monitoring"
+      - "alarm_triggering"
+      - "iot_exposure"
+
+  - product_name: "Tuya Zigbee Motion Sensor"
+    vendor: "tuya"
+    device: "Zigbee Motion Sensor"
+    category: "Sensor"
+    protocol_family: "zigbee"
+    protocol_subtypes: ["motion_sensor"]
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [2000, 3000]
+    modulation_types: ["oqpsk", "dsss"]
+    burst_interval_ms: [1000, 600000]
+    burst_duration_ms: [4, 20]
+    redteam_surface:
+      - "occupancy_monitoring"
+      - "alarm_triggering"
+      - "iot_exposure"
+
+  - product_name: "Tuya Zigbee Bulb"
+    vendor: "tuya"
+    device: "Zigbee Smart Bulb"
+    category: "Lighting"
+    protocol_family: "zigbee"
+    protocol_subtypes: ["smart_bulb"]
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [2000, 3000]
+    modulation_types: ["oqpsk", "dsss"]
+    burst_interval_ms: [100, 60000]
+    burst_duration_ms: [4, 16]
+    redteam_surface:
+      - "lighting_control"
+      - "iot_exposure"
+
+  - product_name: "Sonoff Zigbee Door Sensor"
+    vendor: "sonoff"
+    device: "Zigbee Door Sensor"
+    category: "Sensor"
+    protocol_family: "zigbee"
+    protocol_subtypes: ["door_sensor", "window_sensor"]
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [2000, 3000]
+    modulation_types: ["oqpsk", "dsss"]
+    burst_interval_ms: [1000, 600000]
+    burst_duration_ms: [4, 20]
+    redteam_surface:
+      - "perimeter_monitoring"
+      - "alarm_triggering"
+      - "iot_exposure"
+
+  - product_name: "Sonoff Zigbee Motion Sensor"
+    vendor: "sonoff"
+    device: "Zigbee Motion Sensor"
+    category: "Sensor"
+    protocol_family: "zigbee"
+    protocol_subtypes: ["motion_sensor"]
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [2000, 3000]
+    modulation_types: ["oqpsk", "dsss"]
+    burst_interval_ms: [1000, 600000]
+    burst_duration_ms: [4, 20]
+    redteam_surface:
+      - "occupancy_monitoring"
+      - "alarm_triggering"
+      - "iot_exposure"
+
+  - product_name: "Shelly WiFi Smart Plug"
+    vendor: "shelly"
+    device: "WiFi Smart Plug"
+    category: "Smart Plug"
+    protocol_family: "wifi"
+    protocol_subtypes: ["iot", "smart_plug"]
+    expected_band_mhz:
+      - [2400, 2500]
+    expected_bw_khz: [20000]
+    modulation_types: ["ofdm"]
+    burst_interval_ms: [200, 30000]
+    burst_duration_ms: [1, 12]
+    redteam_surface:
+      - "power_control"
+      - "credential_surface"
+      - "iot_exposure"
+
+  - product_name: "Netatmo Smart Thermostat"
+    vendor: "netatmo"
+    device: "WiFi Smart Thermostat"
+    category: "Thermostat"
+    protocol_family: "wifi"
+    protocol_subtypes: ["iot", "thermostat"]
+    expected_band_mhz:
+      - [2400, 2500]
+    expected_bw_khz: [20000]
+    modulation_types: ["ofdm"]
+    burst_interval_ms: [200, 60000]
+    burst_duration_ms: [1, 12]
+    redteam_surface:
+      - "hvac_control"
+      - "credential_surface"
+      - "iot_exposure"
+
+  - product_name: "tado Smart Radiator Thermostat"
+    vendor: "tado"
+    device: "WiFi Smart Thermostat"
+    category: "Thermostat"
+    protocol_family: "wifi"
+    protocol_subtypes: ["iot", "thermostat"]
+    expected_band_mhz:
+      - [2400, 2500]
+    expected_bw_khz: [20000]
+    modulation_types: ["ofdm"]
+    burst_interval_ms: [200, 60000]
+    burst_duration_ms: [1, 12]
+    redteam_surface:
+      - "hvac_control"
+      - "occupancy_inference"
+      - "iot_exposure"
+
+  - product_name: "SwitchBot Lock"
+    vendor: "switchbot"
+    device: "BLE Smart Lock"
+    category: "Lock"
+    protocol_family: "bluetooth_le"
+    protocol_subtypes: ["smart_lock"]
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [1000, 2000]
+    modulation_types: ["gfsk"]
+    burst_interval_ms: [100, 3000]
+    burst_duration_ms: [2, 12]
+    redteam_surface:
+      - "physical_access"
+      - "credential_surface"
+      - "mobile_auth"
+
+  - product_name: "SwitchBot Meter"
+    vendor: "switchbot"
+    device: "BLE Asset Tracker"
+    category: "Sensor"
+    protocol_family: "bluetooth_le"
+    protocol_subtypes: ["sensor", "beacon"]
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [1000, 2000]
+    modulation_types: ["gfsk"]
+    burst_interval_ms: [500, 5000]
+    burst_duration_ms: [2, 8]
+    redteam_surface:
+      - "environmental_monitoring"
+      - "nearby_presence"
+      - "iot_exposure"
+
+  - product_name: "Govee Smart Bulb"
+    vendor: "govee"
+    device: "BLE Asset Tracker"
+    category: "Lighting"
+    protocol_family: "bluetooth_le"
+    protocol_subtypes: ["lighting", "beacon"]
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [1000, 2000]
+    modulation_types: ["gfsk"]
+    burst_interval_ms: [500, 5000]
+    burst_duration_ms: [2, 8]
+    redteam_surface:
+      - "lighting_control"
+      - "nearby_presence"
+      - "iot_exposure"
+
+  - product_name: "Eve Door and Window"
+    vendor: "eve"
+    device: "Zigbee Door Sensor"
+    category: "Sensor"
+    protocol_family: "thread"
+    protocol_subtypes: ["door_sensor", "window_sensor", "iot"]
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [2000, 3000]
+    modulation_types: ["oqpsk", "dsss"]
+    burst_interval_ms: [1000, 600000]
+    burst_duration_ms: [4, 20]
+    redteam_surface:
+      - "perimeter_monitoring"
+      - "entry_state"
+      - "iot_exposure"
+
+  - product_name: "Meross Smart Plug"
+    vendor: "meross"
+    device: "WiFi Smart Plug"
+    category: "Smart Plug"
+    protocol_family: "wifi"
+    protocol_subtypes: ["iot", "smart_plug"]
+    expected_band_mhz:
+      - [2400, 2500]
+    expected_bw_khz: [20000]
+    modulation_types: ["ofdm"]
+    burst_interval_ms: [200, 30000]
+    burst_duration_ms: [1, 12]
+    redteam_surface:
+      - "power_control"
+      - "credential_surface"
+      - "iot_exposure"
+
+  - product_name: "Sonoff Zigbee Plug"
+    vendor: "sonoff"
+    device: "Zigbee Smart Plug"
+    category: "Smart Plug"
+    protocol_family: "zigbee"
+    protocol_subtypes: ["smart_plug", "switch"]
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [2000, 3000]
+    modulation_types: ["oqpsk", "dsss"]
+    burst_interval_ms: [500, 120000]
+    burst_duration_ms: [4, 20]
+    redteam_surface:
+      - "power_control"
+      - "iot_exposure"
+
+  - product_name: "Kamstrup Smart Meter"
+    vendor: "kamstrup"
+    device: "Wireless Meter"
+    category: "Utility"
+    protocol_family: "wireless_mbus"
+    protocol_subtypes: ["utility_meter", "water_meter", "gas_meter", "heat_meter"]
+    expected_band_mhz:
+      - [868000, 870000]
+    expected_bw_khz: [50, 100, 200]
+    modulation_types: ["fsk", "2fsk", "gmsk"]
+    burst_interval_ms: [10000, 3600000]
+    burst_duration_ms: [10, 500]
+    redteam_surface:
+      - "consumption_telemetry"
+      - "infrastructure_visibility"
+
+  - product_name: "Landis+Gyr Smart Meter"
+    vendor: "landis+gyr"
+    device: "Wireless Meter"
+    category: "Utility"
+    protocol_family: "wireless_mbus"
+    protocol_subtypes: ["utility_meter", "water_meter", "gas_meter", "heat_meter"]
+    expected_band_mhz:
+      - [868000, 870000]
+    expected_bw_khz: [50, 100, 200]
+    modulation_types: ["fsk", "2fsk", "gmsk"]
+    burst_interval_ms: [10000, 3600000]
+    burst_duration_ms: [10, 500]
+    redteam_surface:
+      - "consumption_telemetry"
+      - "infrastructure_visibility"
+
+  - product_name: "Diehl Water Meter"
+    vendor: "diehl"
+    device: "Wireless Meter"
+    category: "Utility"
+    protocol_family: "wireless_mbus"
+    protocol_subtypes: ["utility_meter", "water_meter"]
+    expected_band_mhz:
+      - [868000, 870000]
+    expected_bw_khz: [50, 100, 200]
+    modulation_types: ["fsk", "2fsk", "gmsk"]
+    burst_interval_ms: [10000, 3600000]
+    burst_duration_ms: [10, 500]
+    redteam_surface:
+      - "consumption_telemetry"
+      - "infrastructure_visibility"
+
+  - product_name: "August Smart Lock"
+    vendor: "august"
+    device: "BLE Smart Lock"
+    category: "Lock"
+    protocol_family: "bluetooth_le"
+    protocol_subtypes: ["smart_lock"]
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [1000, 2000]
+    modulation_types: ["gfsk"]
+    burst_interval_ms: [100, 3000]
+    burst_duration_ms: [2, 12]
+    redteam_surface:
+      - "physical_access"
+      - "mobile_auth"
+
+  - product_name: "Yale Assure Lock"
+    vendor: "yale"
+    device: "BLE Smart Lock"
+    category: "Lock"
+    protocol_family: "bluetooth_le"
+    protocol_subtypes: ["smart_lock"]
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [1000, 2000]
+    modulation_types: ["gfsk"]
+    burst_interval_ms: [100, 3000]
+    burst_duration_ms: [2, 12]
+    redteam_surface:
+      - "physical_access"
+      - "credential_surface"
+
+  - product_name: "Sonos Speaker"
+    vendor: "sonos"
+    device: "Bluetooth Speaker"
+    category: "Audio"
+    protocol_family: "bluetooth_classic"
+    protocol_subtypes: ["audio"]
+    expected_band_mhz:
+      - [2400, 2485]
+    expected_bw_khz: [1000, 2000]
+    modulation_types: ["gfsk", "fsk"]
+    burst_interval_ms: [10, 200]
+    burst_duration_ms: [2, 20]
+    redteam_surface:
+      - "audio_sink"
+      - "nearby_presence"
+
+burst_signatures:
+  - signature_name: "BLE Asset Tracker Advertiser"
+    product_name: "Apple AirTag"
+    device: "BLE Asset Tracker"
+    vendor: "apple"
+    protocol_family: "bluetooth_le"
+    modulation: "gfsk"
+    expected_band_mhz:
+      - [2400, 2485]
+    bandwidth_khz: [1000, 2000]
+    burst_interval_ms: [1500, 3000]
+    burst_duration_ms: [2, 6]
+    notes:
+      - "Short recurring advertising bursts"
+      - "Common tracker-like periodicity"
+
+  - signature_name: "Generic BLE Lock Command/Presence"
+    product_name: null
+    device: "BLE Smart Lock"
+    vendor: null
+    protocol_family: "bluetooth_le"
+    modulation: "gfsk"
+    expected_band_mhz:
+      - [2400, 2485]
+    bandwidth_khz: [1000, 2000]
+    burst_interval_ms: [100, 3000]
+    burst_duration_ms: [2, 12]
+    notes:
+      - "Presence and unlock traffic bursts"
+
+  - signature_name: "BLE Wearable Personal Telemetry"
+    product_name: null
+    device: "BLE Smart Watch"
+    vendor: null
+    protocol_family: "bluetooth_le"
+    modulation: "gfsk"
+    expected_band_mhz:
+      - [2400, 2485]
+    bandwidth_khz: [1000, 2000]
+    burst_interval_ms: [100, 5000]
+    burst_duration_ms: [2, 10]
+    notes:
+      - "Recurring wearable advertising and paired telemetry bursts"
+
+  - signature_name: "BLE Smartphone Presence Advertiser"
+    product_name: null
+    device: "BLE Smartphone"
+    vendor: null
+    protocol_family: "bluetooth_le"
+    modulation: "gfsk"
+    expected_band_mhz:
+      - [2400, 2485]
+    bandwidth_khz: [1000, 2000]
+    burst_interval_ms: [20, 3000]
+    burst_duration_ms: [2, 12]
+    notes:
+      - "General phone presence, accessory pairing, and proximity traffic"
+
+  - signature_name: "BLE Earbud Pairing / Presence"
+    product_name: null
+    device: "BLE Earbuds"
+    vendor: null
+    protocol_family: "bluetooth_le"
+    modulation: "gfsk"
+    expected_band_mhz:
+      - [2400, 2485]
+    bandwidth_khz: [1000, 2000]
+    burst_interval_ms: [20, 1500]
+    burst_duration_ms: [2, 10]
+    notes:
+      - "Accessory pairing and nearby audio-device advertising"
+
+  - signature_name: "BLE TV / Set-Top Presence"
+    product_name: null
+    device: "BLE Set-Top Box"
+    vendor: null
+    protocol_family: "bluetooth_le"
+    modulation: "gfsk"
+    expected_band_mhz:
+      - [2400, 2485]
+    bandwidth_khz: [1000, 2000]
+    burst_interval_ms: [100, 10000]
+    burst_duration_ms: [2, 14]
+    notes:
+      - "Stationary consumer entertainment device with remote/control pairing traffic"
+
+  - signature_name: "Zigbee Sensor Event Burst"
+    product_name: null
+    device: "Zigbee Motion Sensor"
+    vendor: null
+    protocol_family: "zigbee"
+    modulation: "oqpsk"
+    expected_band_mhz:
+      - [2400, 2485]
+    bandwidth_khz: [2000, 3000]
+    burst_interval_ms: [1000, 600000]
+    burst_duration_ms: [4, 20]
+    notes:
+      - "Short event-driven mesh bursts"
+
+  - signature_name: "Zigbee Door Contact Event Burst"
+    product_name: "Aqara Door Sensor"
+    device: "Zigbee Door Sensor"
+    vendor: "xiaomi"
+    protocol_family: "zigbee"
+    modulation: "oqpsk"
+    expected_band_mhz:
+      - [2400, 2485]
+    bandwidth_khz: [2000, 3000]
+    burst_interval_ms: [1000, 600000]
+    burst_duration_ms: [4, 20]
+    notes:
+      - "Door open/close state changes with sparse telemetry"
+
+  - signature_name: "WiFi AP Beacon/Control Pattern"
+    product_name: null
+    device: "WiFi Access Point"
+    vendor: null
+    protocol_family: "wifi"
+    modulation: "ofdm"
+    expected_band_mhz:
+      - [2400, 2500]
+      - [5150, 5895]
+    bandwidth_khz: [20000, 40000, 80000]
+    burst_interval_ms: [50, 500]
+    burst_duration_ms: [1, 20]
+    notes:
+      - "Persistent control-plane and beacon-like activity"
+
+  - signature_name: "WiFi Camera Streaming Burstiness"
+    product_name: "Ring Indoor Camera"
+    device: "WiFi IP Camera"
+    vendor: "amazon"
+    protocol_family: "wifi"
+    modulation: "ofdm"
+    expected_band_mhz:
+      - [2400, 2500]
+    bandwidth_khz: [20000, 40000]
+    burst_interval_ms: [20, 300]
+    burst_duration_ms: [2, 40]
+    notes:
+      - "Frequent higher-duty streaming-oriented traffic"
+
+  - signature_name: "WiFi Appliance Telemetry Session"
+    product_name: "Xiaomi Robot Vacuum"
+    device: "WiFi Robot Vacuum"
+    vendor: "xiaomi"
+    protocol_family: "wifi"
+    modulation: "ofdm"
+    expected_band_mhz:
+      - [2400, 2500]
+    bandwidth_khz: [20000, 40000]
+    burst_interval_ms: [50, 2000]
+    burst_duration_ms: [2, 30]
+    notes:
+      - "Mixed control and telemetry bursts"
+
+  - signature_name: "SubGHz Remote Button Burst"
+    product_name: null
+    device: "Sub-GHz Remote Control"
+    vendor: null
+    protocol_family: "subghz_ook"
+    modulation: "ook"
+    expected_band_mhz:
+      - [390000, 470000]
+      - [860000, 930000]
+    bandwidth_khz: [10, 50, 100, 300]
+    burst_interval_ms: [50, 5000]
+    burst_duration_ms: [5, 200]
+    notes:
+      - "Short repeated manual trigger transmission"
+
+  - signature_name: "Wireless Meter Scheduled Uplink"
+    product_name: null
+    device: "Wireless Meter"
+    vendor: null
+    protocol_family: "wireless_mbus"
+    modulation: "2fsk"
+    expected_band_mhz:
+      - [433000, 435000]
+      - [868000, 870000]
+    bandwidth_khz: [50, 100, 200]
+    burst_interval_ms: [10000, 3600000]
+    burst_duration_ms: [10, 500]
+    notes:
+      - "Periodic narrowband telemetry"
+
+redteam_surface_rules:
+  - device: "WiFi Access Point"
+    category: "Router"
+    surfaces:
+      - "network_entrypoint"
+      - "management_plane"
+      - "wifi_infrastructure"
+
+  - device: "WiFi IP Camera"
+    category: "Camera"
+    surfaces:
+      - "video_surveillance"
+      - "credential_surface"
+      - "iot_exposure"
+
+  - device: "WiFi Smart Plug"
+    category: "Smart Plug"
+    surfaces:
+      - "power_control"
+      - "credential_surface"
+      - "home_automation"
+
+  - device: "WiFi Robot Vacuum"
+    category: "Appliance"
+    surfaces:
+      - "mobile_app_surface"
+      - "home_mapping_data"
+      - "iot_control_plane"
+
+  - device: "BLE Smart Lock"
+    category: "Lock"
+    surfaces:
+      - "physical_access"
+      - "credential_surface"
+      - "mobile_auth"
+
+  - device: "BLE Asset Tracker"
+    category: "Tracker"
+    surfaces:
+      - "location_tracking"
+      - "privacy_exposure"
+      - "device_presence"
+
+  - device: "Bluetooth Speaker"
+    category: "Audio"
+    surfaces:
+      - "audio_sink"
+      - "pairing_surface"
+      - "nearby_presence"
+
+  - device: "Zigbee Motion Sensor"
+    category: "Sensor"
+    surfaces:
+      - "occupancy_monitoring"
+      - "alarm_triggering"
+      - "home_automation"
+
+  - device: "Zigbee Door Sensor"
+    category: "Sensor"
+    surfaces:
+      - "perimeter_monitoring"
+      - "entry_state"
+      - "alarm_triggering"
+
+  - device: "Zigbee Smart Bulb"
+    category: "Lighting"
+    surfaces:
+      - "lighting_control"
+      - "mesh_presence"
+      - "iot_exposure"
+
+  - device: "Sub-GHz Remote Control"
+    category: "Remote"
+    surfaces:
+      - "physical_access"
+      - "replay_risk"
+      - "entry_control"
+
+  - device: "Wireless Meter"
+    category: "Utility"
+    surfaces:
+      - "consumption_telemetry"
+      - "occupancy_inference"
+      - "infrastructure_visibility"

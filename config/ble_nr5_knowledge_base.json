@@ -1,0 +1,262 @@
+{
+  "profiles": [
+    {
+      "id": "production_monitoring",
+      "label": "Passive Recon Monitoring",
+      "mode": "red",
+      "summary": "Passive-first Bluetooth census, anomaly watch, and exposure tracking for authorized red-team scope."
+    },
+    {
+      "id": "red_team_validation",
+      "label": "Red Team Validation",
+      "mode": "red",
+      "summary": "Approved lab validation of pairing trust, GATT exposure, and firmware-family risk."
+    },
+    {
+      "id": "intel_baselining",
+      "label": "Red Team Intel Baseline",
+      "mode": "red",
+      "summary": "Long-lived authorized asset inventory, vulnerability enrichment, and target prioritization."
+    }
+  ],
+  "mission_modules": [
+    {
+      "key": "asset_discovery",
+      "label": "RF Asset Discovery and Device Census",
+      "detail": "Inventory advertising identity, UUIDs, timing, signal strength, and dwell."
+    },
+    {
+      "key": "pairing_telemetry",
+      "label": "Pairing, Bonding, and Re-pair Telemetry",
+      "detail": "Track trust flows, Just Works usage, failures, and silent re-pair patterns."
+    },
+    {
+      "key": "gatt_analysis",
+      "label": "GATT Exposure and Authorization Analysis",
+      "detail": "Score readable, writable, notify, and control-plane characteristic surfaces."
+    },
+    {
+      "key": "fingerprinting",
+      "label": "Device Fingerprinting Engine",
+      "detail": "Fuse vendor data, UUID combinations, cadence, and behavior into stable families."
+    },
+    {
+      "key": "vulnerability_enrichment",
+      "label": "Vulnerability Intelligence and Enrichment",
+      "detail": "Map vendors and SDK families to Bluetooth weakness classes and CVE history."
+    },
+    {
+      "key": "target_prioritization",
+      "label": "High-value Target Profiling",
+      "detail": "Promote devices with control, safety, privacy, or credential-adjacent impact."
+    }
+  ],
+  "priority_classes": [
+    "vehicle",
+    "medical_device",
+    "audio",
+    "hid",
+    "smart_lock",
+    "tracker",
+    "industrial_gateway",
+    "wearable",
+    "general"
+  ],
+  "target_class_packs": [
+    {
+      "key": "audio",
+      "label": "Audio Accessories",
+      "operator_goals": [
+        "pairing abuse",
+        "microphone abuse",
+        "tracking / proximity intel"
+      ],
+      "validation_focus": [
+        "pairing mode",
+        "ownership takeover",
+        "control-plane services"
+      ]
+    },
+    {
+      "key": "hid",
+      "label": "HID Devices",
+      "operator_goals": [
+        "keyboard impersonation",
+        "reconnect abuse",
+        "trust downgrade"
+      ],
+      "validation_focus": [
+        "pairing confirmation",
+        "reconnect behavior",
+        "input injection paths"
+      ]
+    },
+    {
+      "key": "tracker",
+      "label": "Trackers",
+      "operator_goals": [
+        "persistent tracking",
+        "owner metadata leakage",
+        "ecosystem abuse"
+      ],
+      "validation_focus": [
+        "identifier stability",
+        "anti-stalking behavior",
+        "vendor ecosystem flows"
+      ]
+    },
+    {
+      "key": "smart_lock",
+      "label": "Access Systems",
+      "operator_goals": [
+        "unlock path mapping",
+        "GATT control surface mapping",
+        "trust downgrade"
+      ],
+      "validation_focus": [
+        "writable controls",
+        "auth gating",
+        "re-pair handling"
+      ]
+    }
+  ],
+  "vulnerability_families": [
+    {
+      "family": "Just Works Trust Weakness",
+      "severity": "high",
+      "detail": "Devices that rely on Just Works pairing increase impersonation and silent pairing risk.",
+      "preconditions": [
+        "Approved proximity",
+        "Pairing window or re-pair opportunity"
+      ],
+      "triggers": {
+        "pairing_methods": [
+          "just works"
+        ],
+        "priority_classes": [
+          "hid",
+          "smart_lock",
+          "medical_device"
+        ]
+      }
+    },
+    {
+      "family": "Weak Bond Reuse / Re-pair Abuse",
+      "severity": "high",
+      "detail": "Repeated bond churn or silent pairing flows suggest weak trust lifecycle handling.",
+      "preconditions": [
+        "Bond overwrite path",
+        "User confirmation gap"
+      ],
+      "triggers": {
+        "pairing_methods": [
+          "just works",
+          "passkey"
+        ],
+        "vendors": [
+          "generic",
+          "unknown"
+        ]
+      }
+    },
+    {
+      "family": "GATT Control Surface Exposure",
+      "severity": "critical",
+      "detail": "Writable or control-plane characteristics without strong authorization enable practical impact.",
+      "preconditions": [
+        "Connectable device",
+        "Writable control characteristic"
+      ],
+      "triggers": {
+        "service_uuids": [
+          "1812",
+          "180f",
+          "180a"
+        ],
+        "priority_classes": [
+          "hid",
+          "smart_lock",
+          "medical_device",
+          "industrial_gateway"
+        ]
+      }
+    },
+    {
+      "family": "Firmware-family Bluetooth Exposure",
+      "severity": "medium",
+      "detail": "Bluetooth stacks and chipset families can inherit known weakness classes or delayed patch uptake.",
+      "preconditions": [
+        "Vendor fingerprint confidence",
+        "Firmware-family hint"
+      ],
+      "triggers": {
+        "vendors": [
+          "nordic",
+          "ti",
+          "apple",
+          "samsung",
+          "generic"
+        ]
+      }
+    },
+    {
+      "family": "Fast Pair / Ecosystem Pairing Abuse",
+      "severity": "high",
+      "detail": "Accessory pairing ecosystems can permit unauthorized ownership transfer or silent trust abuse.",
+      "preconditions": [
+        "Audio accessory or ecosystem tag",
+        "Proximity",
+        "User confirmation gap"
+      ],
+      "triggers": {
+        "priority_classes": [
+          "audio",
+          "wearable"
+        ],
+        "vendors": [
+          "google",
+          "apple",
+          "samsung",
+          "sony"
+        ]
+      }
+    },
+    {
+      "family": "HID Impersonation / Reconnect Abuse",
+      "severity": "critical",
+      "detail": "Input peripherals can become keystroke-injection or reconnect-impersonation targets if trust flows are weak.",
+      "preconditions": [
+        "HID role",
+        "Pairing or reconnect window"
+      ],
+      "triggers": {
+        "service_uuids": [
+          "1812"
+        ],
+        "priority_classes": [
+          "hid"
+        ]
+      }
+    },
+    {
+      "family": "Tracker / Location Abuse",
+      "severity": "high",
+      "detail": "Persistent identifiers, ecosystem service UUIDs, and wearable/tracker roles create tracking and privacy risk.",
+      "preconditions": [
+        "Stable identifiers",
+        "Tracker or ecosystem telemetry"
+      ],
+      "triggers": {
+        "service_uuids": [
+          "fe2c",
+          "fd6f"
+        ],
+        "priority_classes": [
+          "tracker",
+          "wearable",
+          "audio"
+        ]
+      }
+    }
+  ]
+}

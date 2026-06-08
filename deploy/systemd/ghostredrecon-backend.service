@@ -1,0 +1,23 @@
+[Unit]
+Description=GhostRedRecon Backend
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=ghost
+Group=ghost
+WorkingDirectory=/home/ghost/Documents/GhostRedRecon
+Environment=PYTHONUNBUFFERED=1
+Environment=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ExecStart=/home/ghost/Documents/GhostRedRecon/scripts/start_backend_service.sh
+Restart=on-failure
+RestartSec=2
+AmbientCapabilities=CAP_NET_ADMIN CAP_NET_RAW
+CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_RAW
+NoNewPrivileges=false
+StandardOutput=append:/home/ghost/Documents/GhostRedRecon/logs/backend.log
+StandardError=append:/home/ghost/Documents/GhostRedRecon/logs/backend.log
+
+[Install]
+WantedBy=multi-user.target

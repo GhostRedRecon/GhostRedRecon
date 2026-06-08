@@ -1,0 +1,273 @@
+{
+  "network": {
+    "backend": {
+      "host": "127.0.0.1",
+      "port": 8100,
+      "publicUrl": "http://127.0.0.1:8100"
+    },
+    "frontend": {
+      "host": "127.0.0.1",
+      "port": 5174,
+      "publicUrl": "http://127.0.0.1:5174"
+    }
+  },
+  "session": {
+    "defaultFrequencyMHz": 433.92,
+    "pollIntervalMs": 3000
+  },
+  "wifiMk7": {
+    "resourceProfile": "auto"
+  },
+  "sdr": {
+    "device": {
+      "type": "HackRF One",
+      "required": true
+    },
+    "runtime": {
+      "iqPath": "/dev/shm/ghostrecon_iq.iq",
+      "sampleRate": 10000000,
+      "startupTimeoutSeconds": 3
+    },
+    "rf": {
+      "ampEnable": false,
+      "lnaGain": 24,
+      "vgaGain": 32
+    },
+    "bleProfiles": {
+      "defaultProfile": "balanced",
+      "profiles": [
+        {
+          "id": "balanced",
+          "label": "Balanced BLE",
+          "sampleRate": 10000000,
+          "ampEnable": false,
+          "lnaGain": 24,
+          "vgaGain": 32,
+          "iqSnapshotSeconds": 0.12,
+          "flowgraphCaptureSeconds": 0.22
+        },
+        {
+          "id": "high_sensitivity",
+          "label": "High Sensitivity BLE",
+          "sampleRate": 8000000,
+          "ampEnable": false,
+          "lnaGain": 32,
+          "vgaGain": 40,
+          "iqSnapshotSeconds": 0.18,
+          "flowgraphCaptureSeconds": 0.3
+        },
+        {
+          "id": "low_noise",
+          "label": "Low Noise BLE",
+          "sampleRate": 10000000,
+          "ampEnable": false,
+          "lnaGain": 16,
+          "vgaGain": 24,
+          "iqSnapshotSeconds": 0.1,
+          "flowgraphCaptureSeconds": 0.18
+        },
+        {
+          "id": "vendor_focus",
+          "label": "Vendor Focus BLE",
+          "sampleRate": 8000000,
+          "ampEnable": false,
+          "lnaGain": 28,
+          "vgaGain": 34,
+          "iqSnapshotSeconds": 0.24,
+          "flowgraphCaptureSeconds": 0.34
+        }
+      ]
+    },
+    "usb": {
+      "vendorId": "1d50",
+      "productId": "6089",
+      "maxDevicesOnBusWarning": 6
+    }
+  },
+  "gui": {
+    "eyebrow": "GhostRedRecon / Full SIGINT RF Console",
+    "title": "HackRF-Centric Red Team Intelligence Platform",
+    "footerPrimary": "GhostRedRecon Node Frontend",
+    "footerSecondary": "Full SIGINT console migration in progress.",
+    "wifiMk7Features": {
+      "handshakeAnalysis": false,
+      "externalDestinationAnalysis": {
+        "enabled": true,
+        "warning": "Offline external destination analysis uses only retained PCAP evidence and local GeoLite2/MMDB databases.",
+        "countryDbPath": "/usr/share/ettercap/GeoLite2-Country.mmdb",
+        "asnDbPath": "",
+        "limitations": [
+          "GeoIP accuracy depends on database freshness.",
+          "ASN ownership may change.",
+          "CDN infrastructure may mask backend.",
+          "Routing does not prove ownership.",
+          "Encrypted traffic limits visibility."
+        ]
+      },
+      "offlineEvidenceAnalysis": {
+        "enabled": true,
+        "warning": "Offline authentication-evidence analysis is limited to approved .pcap/.pcapng files. Live collection workflows are not enabled here.",
+        "auditLog": "logs/wifi_mk7/imported_capture_audit.jsonl"
+      }
+    },
+    "panelPreferences": {
+      "WIFI-MK7": {
+        "channelPlan": false,
+        "evidence": false,
+        "timeline": false
+      },
+      "BLE-NR5": {
+        "timeline": true
+      }
+    }
+  },
+  "categories": {
+    "subghz": {
+      "enabled": true,
+      "displayName": "Sub-GHz",
+      "defaultFrequencyMHz": 433.92,
+      "bandRangeMHz": [300.0, 1000.0],
+      "channels": [
+        { "label": "315M", "frequencyMHz": 315.0 },
+        { "label": "433.92M", "frequencyMHz": 433.92 },
+        { "label": "868.1M", "frequencyMHz": 868.1 },
+        { "label": "915M", "frequencyMHz": 915.0 }
+      ]
+    },
+    "ble": {
+      "enabled": true,
+      "displayName": "Bluetooth / BLE",
+      "defaultFrequencyMHz": 2402.0,
+      "bandRangeMHz": [2400.0, 2483.5],
+      "channels": [
+        { "label": "ADV37", "frequencyMHz": 2402.0 },
+        { "label": "ADV38", "frequencyMHz": 2426.0 },
+        { "label": "ADV39", "frequencyMHz": 2480.0 }
+      ]
+    },
+    "lora": {
+      "enabled": true,
+      "displayName": "LoRa",
+      "defaultFrequencyMHz": 915.0,
+      "bandRangeMHz": [860.0, 930.0],
+      "channels": [
+        { "label": "EU868", "frequencyMHz": 868.1 },
+        { "label": "US915", "frequencyMHz": 915.0 },
+        { "label": "ISM433", "frequencyMHz": 433.92 }
+      ]
+    },
+    "zigbee": {
+      "enabled": true,
+      "displayName": "Zigbee",
+      "defaultFrequencyMHz": 2405.0,
+      "bandRangeMHz": [2400.0, 2483.5],
+      "channels": [
+        { "label": "CH11", "frequencyMHz": 2405.0 },
+        { "label": "CH12", "frequencyMHz": 2410.0 },
+        { "label": "CH13", "frequencyMHz": 2415.0 },
+        { "label": "CH14", "frequencyMHz": 2420.0 },
+        { "label": "CH15", "frequencyMHz": 2425.0 },
+        { "label": "CH16", "frequencyMHz": 2430.0 },
+        { "label": "CH17", "frequencyMHz": 2435.0 },
+        { "label": "CH18", "frequencyMHz": 2440.0 },
+        { "label": "CH19", "frequencyMHz": 2445.0 },
+        { "label": "CH20", "frequencyMHz": 2450.0 },
+        { "label": "CH21", "frequencyMHz": 2455.0 },
+        { "label": "CH22", "frequencyMHz": 2460.0 },
+        { "label": "CH23", "frequencyMHz": 2465.0 },
+        { "label": "CH24", "frequencyMHz": 2470.0 },
+        { "label": "CH25", "frequencyMHz": 2475.0 },
+        { "label": "CH26", "frequencyMHz": 2480.0 }
+      ]
+    },
+    "wifi": {
+      "enabled": true,
+      "displayName": "WiFi",
+      "defaultFrequencyMHz": 2412.0,
+      "bandRangeMHz": [2400.0, 2500.0],
+      "channels": [
+        { "label": "CH1", "frequencyMHz": 2412.0 },
+        { "label": "CH6", "frequencyMHz": 2437.0 },
+        { "label": "CH11", "frequencyMHz": 2462.0 }
+      ]
+    },
+    "wifiMk7": {
+      "enabled": true,
+      "displayName": "WiFi MK7",
+      "defaultFrequencyMHz": 2412.0,
+      "channels": [
+        { "label": "2.4 GHz Sweep", "frequencyMHz": 2412.0 },
+        { "label": "5 GHz Sweep", "frequencyMHz": 5180.0 }
+      ]
+    },
+    "bleNr5": {
+      "enabled": true,
+      "displayName": "BLE NR5",
+      "defaultFrequencyMHz": 2402.0,
+      "channels": [
+        { "label": "ADV37", "frequencyMHz": 2402.0 },
+        { "label": "ADV38", "frequencyMHz": 2426.0 },
+        { "label": "ADV39", "frequencyMHz": 2480.0 }
+      ]
+    },
+    "iot": {
+      "enabled": true,
+      "displayName": "IoT",
+      "defaultFrequencyMHz": 2405.0,
+      "bandRangeMHz": [300.0, 2500.0],
+      "channels": [
+        { "label": "BLE37", "frequencyMHz": 2402.0 },
+        { "label": "ZB11", "frequencyMHz": 2405.0 },
+        { "label": "WIFI1", "frequencyMHz": 2412.0 },
+        { "label": "ZB15", "frequencyMHz": 2425.0 },
+        { "label": "BLE38", "frequencyMHz": 2426.0 },
+        { "label": "WIFI6", "frequencyMHz": 2437.0 },
+        { "label": "ZB20", "frequencyMHz": 2450.0 },
+        { "label": "WIFI11", "frequencyMHz": 2462.0 },
+        { "label": "ZB24", "frequencyMHz": 2470.0 },
+        { "label": "BLE39", "frequencyMHz": 2480.0 },
+        { "label": "433.92", "frequencyMHz": 433.92 },
+        { "label": "868.30", "frequencyMHz": 868.30 },
+        { "label": "868.95", "frequencyMHz": 868.95 },
+        { "label": "869.525", "frequencyMHz": 869.525 },
+        { "label": "LORA915", "frequencyMHz": 915.0 }
+      ]
+    },
+    "ismDecoder": {
+      "enabled": true,
+      "displayName": "433 / 868 Decoder",
+      "defaultFrequencyMHz": 433.92,
+      "channels": [
+        { "label": "ISM433", "frequencyMHz": 433.92 },
+        { "label": "EU868.30", "frequencyMHz": 868.30 },
+        { "label": "EU868.95", "frequencyMHz": 868.95 },
+        { "label": "EU869.525", "frequencyMHz": 869.525 }
+      ]
+    },
+    "signalLab": {
+      "enabled": true,
+      "displayName": "Signal Lab",
+      "defaultFrequencyMHz": 433.92,
+      "channels": [
+        { "label": "Replay Lab 433", "frequencyMHz": 433.92 },
+        { "label": "Replay Lab 868", "frequencyMHz": 868.30 },
+        { "label": "Replay Lab 2.4", "frequencyMHz": 2402.0 }
+      ]
+    },
+    "kismetFusion": {
+      "enabled": true,
+      "displayName": "Kismet RF Fusion",
+      "defaultFrequencyMHz": 2412.0,
+      "channels": [
+        { "label": "WiFi/BLE/Zigbee 2.4", "frequencyMHz": 2412.0 },
+        { "label": "BLE ADV38", "frequencyMHz": 2426.0 },
+        { "label": "BLE/Zigbee 2480", "frequencyMHz": 2480.0 }
+      ]
+    }
+  },
+  "features": {
+    "attackControlsEnabled": false,
+    "aiConsoleEnabled": false,
+    "legacyFrontendEnabled": false
+  }
+}

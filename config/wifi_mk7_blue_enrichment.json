@@ -1,0 +1,10 @@
+{
+  "enabled": false,
+  "profiles": [
+    {
+      "ssid": "SERAH",
+      "passphrase": "",
+      "tshark_key": ""
+    }
+  ]
+}

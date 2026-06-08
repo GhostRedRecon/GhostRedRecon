@@ -1,0 +1,155 @@
+profiles:
+  - profile_name: "Dragino EU868 Sensor Baseline"
+    vendor: "Dragino"
+    product: "Dragino LoRa Sensor"
+    device_type: "LoRa IoT Sensor"
+    bandplan: "eu868"
+    region: "eu868"
+    center_freq_mhz: 868.1
+    dwell_span_mhz: 0.6
+    frequency_count: 3
+    cadence_class: "event_driven"
+    identity_family: "lorawan_endpoint"
+    role: "end_device"
+    tags: ["baseline", "eu868", "sensor"]
+    source_url: "https://www.dragino.com/products/water-meter-flow-sensor/item/222-sw3l.html"
+
+  - profile_name: "Milesight EU868 Sensor Baseline"
+    vendor: "Milesight"
+    product: "Milesight LoRa Sensor"
+    device_type: "LoRa IoT Sensor"
+    bandplan: "eu868"
+    region: "eu868"
+    center_freq_mhz: 868.3
+    dwell_span_mhz: 0.8
+    frequency_count: 4
+    cadence_class: "event_driven"
+    identity_family: "lorawan_endpoint"
+    role: "end_device"
+    tags: ["baseline", "eu868", "sensor"]
+
+  - profile_name: "Kerlink EU868 Gateway Baseline"
+    vendor: "Kerlink"
+    product: "Kerlink LoRa Gateway"
+    device_type: "LoRaWAN Gateway"
+    bandplan: "eu868"
+    region: "eu868"
+    center_freq_mhz: 868.3
+    dwell_span_mhz: 2.0
+    frequency_count: 6
+    cadence_class: "infrastructure_active"
+    identity_family: "lorawan_gateway"
+    role: "gateway"
+    tags: ["baseline", "eu868", "gateway"]
+    source_url: "https://www.kerlink.com/product/wirnet-istation/"
+
+  - profile_name: "Multitech US915 Gateway Baseline"
+    vendor: "Multitech"
+    product: "Multitech LoRa Gateway"
+    device_type: "LoRaWAN Gateway"
+    bandplan: "us915"
+    region: "us915"
+    center_freq_mhz: 904.3
+    dwell_span_mhz: 2.0
+    frequency_count: 6
+    cadence_class: "infrastructure_active"
+    identity_family: "lorawan_gateway"
+    role: "gateway"
+    tags: ["baseline", "us915", "gateway"]
+    source_url: "https://multitech.com/all-products/lorawan-devices/lorawan-gateways/"
+
+  - profile_name: "Libelium Spain Smart Parking EU868"
+    vendor: "Libelium"
+    product: "Smart Parking"
+    device_type: "LoRa Smart Parking Sensor"
+    bandplan: "eu868"
+    region: "eu868"
+    center_freq_mhz: 868.3
+    dwell_span_mhz: 0.4
+    frequency_count: 2
+    bandwidth_mhz: 0.125
+    cadence_class: "event_driven"
+    identity_family: "lorawan_endpoint"
+    role: "end_device"
+    tags: ["baseline", "spain", "eu868", "parking", "smart-city"]
+    source_url: "https://www.libelium.com/es/iot-solutions/parking/"
+
+  - profile_name: "IMST iOKE868 Meter Reader"
+    vendor: "IMST GmbH"
+    product: "iOKE868"
+    device_type: "Utility Meter Endpoint"
+    bandplan: "eu868"
+    region: "eu868"
+    center_freq_mhz: 868.1
+    dwell_span_mhz: 0.3
+    frequency_count: 2
+    bandwidth_mhz: 0.125
+    cadence_class: "meter_periodic"
+    identity_family: "utility_meter_endpoint"
+    role: "end_device"
+    tags: ["baseline", "eu868", "meter", "optical-reader", "utility"]
+    source_url: "https://www.thethingsnetwork.org/device-repository/devices/imst/ioke868/"
+
+  - profile_name: "Adeunis Pulse EU868"
+    vendor: "Adeunis"
+    product: "Pulse"
+    device_type: "AMI Meter Endpoint"
+    bandplan: "eu868"
+    region: "eu868"
+    center_freq_mhz: 868.3
+    dwell_span_mhz: 0.25
+    frequency_count: 2
+    bandwidth_mhz: 0.125
+    cadence_class: "meter_periodic"
+    identity_family: "ami_meter_endpoint"
+    role: "end_device"
+    tags: ["baseline", "eu868", "pulse", "meter", "building"]
+    source_url: "https://www.adeunis.com/capteur-iot-pulse-nouveau/"
+
+  - profile_name: "Dragino SW3L Flow Sensor EU868"
+    vendor: "Dragino"
+    product: "SW3L LoRaWAN Outdoor Flow Sensor"
+    device_type: "Utility Meter Endpoint"
+    bandplan: "eu868"
+    region: "eu868"
+    center_freq_mhz: 868.1
+    dwell_span_mhz: 0.35
+    frequency_count: 3
+    bandwidth_mhz: 0.125
+    cadence_class: "meter_periodic"
+    identity_family: "utility_meter_endpoint"
+    role: "end_device"
+    tags: ["baseline", "eu868", "water", "flow", "meter"]
+    source_url: "https://www.dragino.com/products/water-meter-flow-sensor/item/222-sw3l.html"
+
+  - profile_name: "Dragino LWL01 Leak Sensor EU868"
+    vendor: "Dragino"
+    product: "LWL01"
+    device_type: "LoRa IoT Sensor"
+    bandplan: "eu868"
+    region: "eu868"
+    center_freq_mhz: 868.1
+    dwell_span_mhz: 0.25
+    frequency_count: 2
+    bandwidth_mhz: 0.125
+    cadence_class: "event_driven"
+    identity_family: "lorawan_endpoint"
+    role: "end_device"
+    tags: ["baseline", "eu868", "water-leak", "building", "alarm"]
+    source_url: "https://www.dragino.com/products/lorawan-nb-iot-door-sensor-water-leak/item/158-lwl01.html"
+
+  - profile_name: "Kerlink iStation EU868 Gateway"
+    vendor: "Kerlink"
+    product: "Wirnet iStation"
+    device_type: "LoRaWAN Gateway"
+    bandplan: "eu868"
+    region: "eu868"
+    center_freq_mhz: 868.3
+    dwell_span_mhz: 2.0
+    frequency_count: 8
+    bandwidth_mhz: 0.5
+    cadence_class: "infrastructure_active"
+    identity_family: "lorawan_gateway"
+    role: "gateway"
+    tags: ["baseline", "eu868", "gateway", "outdoor", "smart-city"]
+    source_url: "https://www.kerlink.com/product/wirnet-istation/"

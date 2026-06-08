@@ -1,0 +1,59 @@
+# =============================================================================
+# GHOSTRECON — SDR CONFIGURATION
+# FILE:         backend/config/sdr.yaml
+# VERSION:      v4.0.0 (CONFIG-DRIVEN LIFECYCLE + WIDEBAND STABLE)
+# LAST UPDATED: 2026-03-01
+# =============================================================================
+
+# =============================================================================
+# RX — HARDWARE LAYER
+# =============================================================================
+rx:
+  sample_rate: 20000000 # 5 MHz stable wideband
+  lna_gain: 24
+  vga_gain: 32
+  amp_enable: false
+
+  # Ring buffer sizing (multiplier of FFT size)
+  buffer_multiplier: 4        # 4x FFT window
+  min_buffer_samples: 32768   # explicit override (optional)
+
+# =============================================================================
+# FFT — DSP LAYER
+# =============================================================================
+fft:
+  size: 8192                  # Wideband structure visibility
+  fps: 20
+  max_stale_ms: 3000          # API stale detection threshold
+
+  # IQ window used for feature extraction
+  iq_window_size: 8192        # defaults to fft.size if omitted
+
+# =============================================================================
+# SESSION — LIFECYCLE CONTROL
+# =============================================================================
+session:
+  min_buffer_samples: 32768   # Must be >= fft.size
+  startup_timeout_seconds: 10
+# =============================================================================
+# SDR IO MODE
+# =============================================================================
+sdr_io:
+  iq_path: /dev/shm/ghostrecon_iq.iq
+  read_chunk_bytes: 262144
+  
+# =============================================================================
+# RECON — EXTRACTION SAFETY
+# =============================================================================
+recon:
+  emitter_freq_tolerance_mhz: 0.5
+  emitter_timeout_seconds: 5
+  max_emitters: 500
+
+# =============================================================================
+# SAFETY GUARDS
+# =============================================================================
+safety:
+  max_usb_restart_attempts: 3
+  auto_recover_fft: true
+  auto_recover_sdr: true

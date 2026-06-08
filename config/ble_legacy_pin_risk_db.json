@@ -1,0 +1,155 @@
+{
+  "schema_version": "1.0",
+  "generated_on": "2026-04-17",
+  "purpose": "Legacy Bluetooth PIN risk knowledge base for owned-device auditing and lab validation. This is not an exhaustive exploit database and should not be used for unauthorized pairing attempts.",
+  "scope": {
+    "transport_focus": [
+      "BR/EDR legacy pairing",
+      "LE legacy pairing risk indicators",
+      "pairing UX and PIN challenge observation"
+    ],
+    "non_goals": [
+      "Product-to-default-PIN attack database",
+      "Automated credential spraying",
+      "Unauthorized pairing automation"
+    ]
+  },
+  "common_legacy_pins": [
+    {
+      "pin": "0000",
+      "prevalence": "high",
+      "contexts": [
+        "older speakers",
+        "older car kits",
+        "older headsets",
+        "generic accessories"
+      ],
+      "operator_meaning": "High legacy default-PIN risk if a PIN challenge is observed."
+    },
+    {
+      "pin": "1234",
+      "prevalence": "high",
+      "contexts": [
+        "older accessories",
+        "generic consumer peripherals"
+      ],
+      "operator_meaning": "Common fallback PIN according to Android help."
+    },
+    {
+      "pin": "1111",
+      "prevalence": "medium",
+      "contexts": [
+        "some headsets",
+        "older accessories"
+      ],
+      "operator_meaning": "Seen in legacy headset-style workflows; lower prevalence than 0000/1234."
+    }
+  ],
+  "risk_taxonomy": {
+    "legacy_pin_challenge_observed": {
+      "severity": "high",
+      "meaning": "The device exposed a legacy PIN challenge path during pairing workflow observation.",
+      "next_steps": [
+        "Perform a manual owned-target pairing audit.",
+        "Verify whether Secure Simple Pairing or Secure Connections can be enforced instead.",
+        "Check whether the device remains bondable/discoverable beyond commissioning."
+      ]
+    },
+    "no_pin_exchange_observed": {
+      "severity": "informational",
+      "meaning": "No legacy PIN exchange was observed in the current validation run.",
+      "next_steps": [
+        "Treat as inconclusive unless the pairing mode is directly identified.",
+        "Repeat validation during a known pairing window."
+      ]
+    },
+    "secure_pairing_mode": {
+      "severity": "low",
+      "meaning": "Observed evidence points to a stronger pairing path such as Numeric Comparison, Passkey, or OOB rather than a reusable legacy PIN."
+    }
+  },
+  "pairing_mode_risk_map": {
+    "legacy pin": {
+      "legacy_pin_risk": "likely",
+      "operator_verdict": "Legacy PIN path exposed"
+    },
+    "pin": {
+      "legacy_pin_risk": "likely",
+      "operator_verdict": "Legacy PIN path exposed"
+    },
+    "just works": {
+      "legacy_pin_risk": "unlikely",
+      "operator_verdict": "No PIN, but weak unauthenticated pairing path"
+    },
+    "passkey": {
+      "legacy_pin_risk": "unlikely",
+      "operator_verdict": "User-assisted pairing flow observed"
+    },
+    "numeric comparison": {
+      "legacy_pin_risk": "unlikely",
+      "operator_verdict": "Authenticated comparison flow observed"
+    },
+    "oob": {
+      "legacy_pin_risk": "unlikely",
+      "operator_verdict": "Out-of-band pairing flow observed"
+    },
+    "unknown": {
+      "legacy_pin_risk": "unknown",
+      "operator_verdict": "Pairing mode not resolved"
+    }
+  },
+  "evidence_fields": [
+    "pin_audit.audit_state",
+    "pin_audit.prompt_seen",
+    "pin_audit.tested_pins",
+    "trust_lifecycle.pairing_method",
+    "active_validation.connect_result",
+    "active_validation.info.legacy_pairing",
+    "validation_suite.scenarios"
+  ],
+  "operator_display_terms": {
+    "pin_audit_header": "PIN Audit",
+    "link_path_header": "Link Path",
+    "verdict_header": "Verdict",
+    "trust_state_header": "Trust State",
+    "auth_boundary_header": "Auth Boundary",
+    "gatt_surface_header": "GATT Surface"
+  },
+  "sources": [
+    {
+      "title": "Android Help: Find and set up Bluetooth devices near your Android device",
+      "url": "https://support.google.com/android/answer/9075925?hl=",
+      "notes": "Mentions 0000 and 1234 as the most common passcodes."
+    },
+    {
+      "title": "Sony Support: What is the Passcode or Password When Pairing with Another Bluetooth Device?",
+      "url": "https://www.sony.com/electronics/support/articles/00030339",
+      "notes": "Documents 0000 for applicable products."
+    },
+    {
+      "title": "Bluetooth SIG Security Notice: Impersonation in the PIN Pairing Protocol",
+      "url": "https://www.bluetooth.com/learn-about-bluetooth/key-attributes/bluetooth-security/impersonation-pin-pairing/",
+      "notes": "Confirms legacy BR/EDR PIN pairing remains a security-relevant surface."
+    },
+    {
+      "title": "Bluetooth SIG Security Notice: LE Legacy Pairing",
+      "url": "https://www.bluetooth.com/learn-about-bluetooth/key-attributes/bluetooth-security/legacy-pairing/",
+      "notes": "Frames LE legacy pairing as a distinct risk area."
+    },
+    {
+      "title": "Black Hat USA 2016: GATTacking Bluetooth Smart Devices",
+      "url": "https://www.blackhat.com/docs/us-16/materials/us-16-Jasek-GATTacking-Bluetooth-Smart-Devices-Introducing-a-New-BLE-Proxy-Tool-wp.pdf",
+      "notes": "Supports service-level audit and pairing/GATT workflow analysis."
+    },
+    {
+      "title": "Microsoft Q&A: Bluetooth device requiring PIN",
+      "url": "https://learn.microsoft.com/en-us/answers/questions/2568566/how-do-i-add-a-bluetooth-device-that-requires-a-pi",
+      "notes": "Anecdotal but useful historical evidence of 0000 and 1111 in older accessory flows."
+    },
+    {
+      "title": "Wireshark Bluetooth Wiki",
+      "url": "https://wiki.wireshark.org/Bluetooth",
+      "notes": "Relevant to capture and protocol visibility, not PIN assignment itself."
+    }
+  ]
+}

@@ -1,0 +1,277 @@
+# =============================================================================
+# PROJECT:      GHOSTRECON
+# FILE:         backend/intel/db/rf_burst_signatures.yaml
+# VERSION:      v1.0.0
+# LAST UPDATED: 2026-03-04
+#
+# =============================================================================
+# ARCHITECTURE
+# =============================================================================
+#
+# ReconEngine
+#      ↓
+# SignalEngine
+#      ↓
+# RF Behavior Extraction
+#      ↓
+# RFBurstSignatureEngine
+#      ↓
+# rf_burst_signatures.yaml  (THIS FILE)
+#
+# =============================================================================
+# RESPONSIBILITY
+# =============================================================================
+#
+# Provide product-level RF fingerprints.
+#
+# These signatures allow GhostRecon to identify
+# specific IoT products using:
+#
+#   burst duration
+#   periodicity
+#   bandwidth
+#   modulation
+#
+# This database enables:
+#
+#   Apple AirTag detection
+#   SmartTag detection
+#   Philips Hue detection
+#   Xiaomi Aqara detection
+#   Smart meter detection
+#
+# =============================================================================
+# DESIGN PRINCIPLES
+# =============================================================================
+#
+# ✔ Passive RF fingerprinting
+# ✔ Device-model identification
+# ✔ Burst-timing analysis
+# ✔ No packet decoding required
+# ✔ SDR-friendly detection
+#
+# =============================================================================
+
+rf_burst_signatures:
+
+# -------------------------------------------------
+# BLE TRACKERS
+# -------------------------------------------------
+
+- device: "Apple AirTag"
+  band_mhz: [2400, 2485]
+  burst_ms: [2, 6]
+  periodicity_sec: [1.5, 3]
+  bandwidth_mhz: [0.8, 1.5]
+  modulation: "GFSK"
+
+- device: "Samsung SmartTag"
+  band_mhz: [2400, 2485]
+  burst_ms: [2, 8]
+  periodicity_sec: [1, 3]
+  bandwidth_mhz: [0.8, 1.5]
+  modulation: "GFSK"
+
+- device: "Tile Tracker"
+  band_mhz: [2400, 2485]
+  burst_ms: [2, 6]
+  periodicity_sec: [1, 4]
+  bandwidth_mhz: [0.8, 1.5]
+  modulation: "GFSK"
+
+- device: "Chipolo Tracker"
+  band_mhz: [2400, 2485]
+  burst_ms: [2, 6]
+  periodicity_sec: [1, 4]
+  bandwidth_mhz: [0.8, 1.5]
+  modulation: "GFSK"
+
+- device: "Google Find My Tracker"
+  band_mhz: [2400, 2485]
+  burst_ms: [2, 6]
+  periodicity_sec: [1, 3]
+  bandwidth_mhz: [0.8, 1.5]
+  modulation: "GFSK"
+
+- device: "Apple Watch"
+  band_mhz: [2400, 2485]
+  burst_ms: [2, 8]
+  periodicity_sec: [0.1, 5]
+  bandwidth_mhz: [0.8, 1.5]
+  modulation: "GFSK"
+
+- device: "Samsung Galaxy Watch"
+  band_mhz: [2400, 2485]
+  burst_ms: [2, 8]
+  periodicity_sec: [0.1, 5]
+  bandwidth_mhz: [0.8, 1.5]
+  modulation: "GFSK"
+
+- device: "iPhone"
+  band_mhz: [2400, 2485]
+  burst_ms: [2, 10]
+  periodicity_sec: [0.02, 3]
+  bandwidth_mhz: [0.8, 1.5]
+  modulation: "GFSK"
+
+- device: "Samsung Galaxy Phone"
+  band_mhz: [2400, 2485]
+  burst_ms: [2, 10]
+  periodicity_sec: [0.02, 3]
+  bandwidth_mhz: [0.8, 1.5]
+  modulation: "GFSK"
+
+- device: "Google Pixel Phone"
+  band_mhz: [2400, 2485]
+  burst_ms: [2, 10]
+  periodicity_sec: [0.02, 3]
+  bandwidth_mhz: [0.8, 1.5]
+  modulation: "GFSK"
+
+- device: "Apple AirPods"
+  band_mhz: [2400, 2485]
+  burst_ms: [2, 8]
+  periodicity_sec: [0.02, 2]
+  bandwidth_mhz: [0.8, 1.5]
+  modulation: "GFSK"
+
+- device: "Samsung Galaxy Buds"
+  band_mhz: [2400, 2485]
+  burst_ms: [2, 8]
+  periodicity_sec: [0.02, 2]
+  bandwidth_mhz: [0.8, 1.5]
+  modulation: "GFSK"
+
+- device: "LG Smart TV"
+  band_mhz: [2400, 2485]
+  burst_ms: [2, 12]
+  periodicity_sec: [0.1, 10]
+  bandwidth_mhz: [0.8, 1.5]
+  modulation: "GFSK"
+
+- device: "Samsung Smart TV"
+  band_mhz: [2400, 2485]
+  burst_ms: [2, 12]
+  periodicity_sec: [0.1, 10]
+  bandwidth_mhz: [0.8, 1.5]
+  modulation: "GFSK"
+
+- device: "Orange TV Decoder"
+  band_mhz: [2400, 2485]
+  burst_ms: [2, 12]
+  periodicity_sec: [0.1, 10]
+  bandwidth_mhz: [0.8, 1.5]
+  modulation: "GFSK"
+
+- device: "JBL Bluetooth Speaker"
+  band_mhz: [2400, 2485]
+  burst_ms: [2, 20]
+  periodicity_sec: [0.01, 1]
+  bandwidth_mhz: [0.8, 1.5]
+  modulation: "GFSK"
+
+- device: "Bose Speaker"
+  band_mhz: [2400, 2485]
+  burst_ms: [2, 20]
+  periodicity_sec: [0.01, 1]
+  bandwidth_mhz: [0.8, 1.5]
+  modulation: "GFSK"
+
+
+# -------------------------------------------------
+# ZIGBEE PRODUCTS
+# -------------------------------------------------
+
+- device: "Philips Hue Bulb"
+  band_mhz: [2400, 2485]
+  burst_ms: [2, 10]
+  periodicity_sec: [0, 2]
+  bandwidth_mhz: [1.5, 3]
+  modulation: "DSSS-OQPSK"
+
+- device: "Xiaomi Aqara Door Sensor"
+  band_mhz: [2400, 2485]
+  burst_ms: [2, 6]
+  periodicity_sec: [30, 120]
+  bandwidth_mhz: [1.5, 3]
+  modulation: "DSSS-OQPSK"
+
+- device: "IKEA Tradfri Bulb"
+  band_mhz: [2400, 2485]
+  burst_ms: [2, 10]
+  periodicity_sec: [0, 2]
+  bandwidth_mhz: [1.5, 3]
+  modulation: "DSSS-OQPSK"
+
+- device: "IKEA STYRBAR Remote"
+  band_mhz: [2400, 2485]
+  burst_ms: [2, 10]
+  periodicity_sec: [0, 120]
+  bandwidth_mhz: [1.5, 3]
+  modulation: "DSSS-OQPSK"
+
+- device: "IKEA PARASOLL Door Sensor"
+  band_mhz: [2400, 2485]
+  burst_ms: [4, 20]
+  periodicity_sec: [1, 600]
+  bandwidth_mhz: [1.5, 3]
+  modulation: "DSSS-OQPSK"
+
+- device: "IKEA VALLHORN Motion Sensor"
+  band_mhz: [2400, 2485]
+  burst_ms: [4, 20]
+  periodicity_sec: [1, 600]
+  bandwidth_mhz: [1.5, 3]
+  modulation: "DSSS-OQPSK"
+
+- device: "IKEA BADRING Leak Sensor"
+  band_mhz: [2400, 2485]
+  burst_ms: [4, 20]
+  periodicity_sec: [1, 600]
+  bandwidth_mhz: [1.5, 3]
+  modulation: "DSSS-OQPSK"
+
+- device: "IKEA FYRTUR Smart Blind"
+  band_mhz: [2400, 2485]
+  burst_ms: [4, 24]
+  periodicity_sec: [0, 120]
+  bandwidth_mhz: [1.5, 3]
+  modulation: "DSSS-OQPSK"
+
+
+# -------------------------------------------------
+# SUBGHz PRODUCTS
+# -------------------------------------------------
+
+- device: "433MHz Door Sensor"
+  band_mhz: [433.7, 434.3]
+  burst_ms: [10, 40]
+  periodicity_sec: [0, 5]
+  bandwidth_mhz: [0.005, 0.04]
+  modulation: "OOK"
+
+- device: "433MHz Weather Station"
+  band_mhz: [433.7, 434.3]
+  burst_ms: [20, 60]
+  periodicity_sec: [20, 120]
+  bandwidth_mhz: [0.005, 0.04]
+  modulation: "OOK"
+
+
+# -------------------------------------------------
+# LORA PRODUCTS
+# -------------------------------------------------
+
+- device: "LoRa Sensor Node"
+  band_mhz: [863, 870]
+  burst_ms: [50, 400]
+  periodicity_sec: [30, 600]
+  bandwidth_mhz: [0.1, 0.5]
+  modulation: "LORA"
+
+- device: "LoRa Water Meter"
+  band_mhz: [863, 870]
+  burst_ms: [100, 600]
+  periodicity_sec: [300, 1800]
+  bandwidth_mhz: [0.1, 0.5]
+  modulation: "LORA"

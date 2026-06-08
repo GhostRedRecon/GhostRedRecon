@@ -1,0 +1,80 @@
+{
+  "enabled": true,
+  "profiles": [
+    {
+      "family": "tp_link_tapo_lab",
+      "brands": ["TP-Link", "Tapo"],
+      "detection_class": "hybrid",
+      "confidence_bias": 16,
+      "oui_keywords": ["tp-link", "tplink", "tp-link systems"],
+      "hostname_keywords": ["tapo", "c200", "c210", "c220", "c225", "c310", "c320", "c420", "c425", "tc60", "tc65", "tc70", "tc71", "tc73", "tc82", "tc85"],
+      "ssid_keywords": ["tapo"],
+      "mdns_ssdp_keywords": ["onvif", "rtsp", "ipcamera", "tapo"],
+      "tls_sni_keywords": ["tapo", "tplinkcloud", "tp-link", "nbu.iot"],
+      "cert_keywords": ["tp-link", "tapo"],
+      "local_protocols": { "rtsp": "conditional", "onvif": "conditional", "http_https": "conditional", "other": ["nvr"] },
+      "traffic_profile": { "static_rssi": true, "probe_rate": "low", "uplink_bias": "high", "long_lived_flows": true, "packet_shape": "steady" },
+      "notes": "Lab override for TP-Link Tapo camera families."
+    },
+    {
+      "family": "reolink_lab",
+      "brands": ["Reolink"],
+      "detection_class": "hybrid",
+      "confidence_bias": 18,
+      "oui_keywords": ["reolink"],
+      "hostname_keywords": ["reolink", "e1", "argus", "rlc", "trackmix", "duo", "lumus"],
+      "ssid_keywords": ["reolink"],
+      "mdns_ssdp_keywords": ["onvif", "rtsp", "reolink"],
+      "tls_sni_keywords": ["reolink"],
+      "cert_keywords": ["reolink"],
+      "local_protocols": { "rtsp": "conditional", "onvif": "conditional", "http_https": "conditional", "other": ["cgi"] },
+      "traffic_profile": { "static_rssi": true, "probe_rate": "low", "uplink_bias": "high", "long_lived_flows": true, "packet_shape": "steady" },
+      "notes": "Lab override for Reolink cameras."
+    },
+    {
+      "family": "amazon_ring_lab",
+      "brands": ["Ring", "Amazon"],
+      "detection_class": "cloud_locked",
+      "confidence_bias": 18,
+      "oui_keywords": ["ring", "amazon"],
+      "hostname_keywords": ["ring", "doorbell", "stickup", "floodlight"],
+      "ssid_keywords": ["ring"],
+      "mdns_ssdp_keywords": ["ring"],
+      "tls_sni_keywords": ["ring", "amazon", "aws"],
+      "cert_keywords": ["amazon", "ring"],
+      "local_protocols": { "rtsp": false, "onvif": false, "http_https": true, "other": ["cloud streaming"] },
+      "traffic_profile": { "static_rssi": true, "probe_rate": "low", "uplink_bias": "high", "long_lived_flows": true, "packet_shape": "steady" },
+      "notes": "Lab override for Ring cloud cameras and doorbells."
+    },
+    {
+      "family": "google_nest_lab",
+      "brands": ["Google", "Nest"],
+      "detection_class": "cloud_locked",
+      "confidence_bias": 18,
+      "oui_keywords": ["google", "nest"],
+      "hostname_keywords": ["nest", "doorbell", "google"],
+      "ssid_keywords": ["nest"],
+      "mdns_ssdp_keywords": ["googlecast", "google"],
+      "tls_sni_keywords": ["googleapis", "nest", "gvt1", "googlevideo"],
+      "cert_keywords": ["google", "nest"],
+      "local_protocols": { "rtsp": false, "onvif": false, "http_https": true, "other": ["cloud streaming"] },
+      "traffic_profile": { "static_rssi": true, "probe_rate": "low", "uplink_bias": "high", "long_lived_flows": true, "packet_shape": "steady" },
+      "notes": "Lab override for Nest cameras and doorbells."
+    },
+    {
+      "family": "eufy_anker_lab",
+      "brands": ["Eufy", "Anker"],
+      "detection_class": "cloud_locked",
+      "confidence_bias": 16,
+      "oui_keywords": ["eufy", "anker"],
+      "hostname_keywords": ["eufy", "anker", "indoorcam", "solocam", "doorbell"],
+      "ssid_keywords": ["eufy"],
+      "mdns_ssdp_keywords": ["eufy", "homebase"],
+      "tls_sni_keywords": ["eufylife", "anker", "security", "homebase"],
+      "cert_keywords": ["eufy", "anker"],
+      "local_protocols": { "rtsp": false, "onvif": false, "http_https": true, "other": ["cloud relay"] },
+      "traffic_profile": { "static_rssi": true, "probe_rate": "low", "uplink_bias": "high", "long_lived_flows": true, "packet_shape": "steady" },
+      "notes": "Lab override for Eufy cameras."
+    }
+  ]
+}

@@ -1,0 +1,125 @@
+metadata:
+  version: "2026-04-03"
+  description: "Decoded BLE advertisement knowledge base for product-safe identification."
+
+company_ids:
+  "0006": "Microsoft"
+  "004C": "Apple"
+  "0059": "Nordic Semiconductor"
+  "0075": "Samsung"
+  "00A0": "Google Nest"
+  "00C7": "Espressif"
+  "00D2": "Bose"
+  "00E0": "Google"
+  "00E1": "Xiaomi"
+  "00F0": "Garmin"
+  "0118": "Tile"
+  "0133": "Fitbit"
+
+service_uuid_names:
+  "180A": "Device Information"
+  "180D": "Heart Rate"
+  "180F": "Battery Service"
+  "1812": "Human Interface Device"
+  "181A": "Environmental Sensing"
+  "1848": "Generic Media Control"
+  "FCD2": "BTHome"
+  "FD44": "Apple Continuity"
+  "FD5A": "Find My"
+  "FD6F": "Exposure Notification"
+  "FE2C": "Fast Pair"
+  "FEAA": "Eddystone"
+  "FE9F": "Google Nearby"
+
+product_signatures:
+  - label: "Apple AirTag"
+    vendor: "Apple"
+    product_category: "asset_tracker"
+    rf_device_class: "ble_tracker"
+    role: "tracker_tag"
+    confidence: 0.96
+    match:
+      manufacturer_id: ["004C"]
+      name_contains: ["airtag"]
+
+  - label: "Apple Find My Accessory"
+    vendor: "Apple"
+    product_category: "asset_tracker"
+    rf_device_class: "ble_tracker"
+    role: "tracker_tag"
+    confidence: 0.90
+    match:
+      service_uuid_any: ["FD5A"]
+
+  - label: "Apple Continuity Device"
+    vendor: "Apple"
+    product_category: "phone_or_computing"
+    rf_device_class: "ble_host_device"
+    role: "phone_or_computing_device"
+    confidence: 0.80
+    match:
+      service_uuid_any: ["FD44"]
+
+  - label: "Tile Tracker"
+    vendor: "Tile"
+    product_category: "asset_tracker"
+    rf_device_class: "ble_tracker"
+    role: "tracker_tag"
+    confidence: 0.92
+    match:
+      manufacturer_id: ["0118"]
+
+  - label: "Samsung SmartTag"
+    vendor: "Samsung"
+    product_category: "asset_tracker"
+    rf_device_class: "ble_tracker"
+    role: "tracker_tag"
+    confidence: 0.88
+    match:
+      manufacturer_id: ["0075"]
+      name_contains: ["smarttag"]
+
+  - label: "Google Fast Pair Accessory"
+    vendor: "Google"
+    product_category: "audio_device"
+    rf_device_class: "ble_accessory"
+    role: "audio_accessory"
+    confidence: 0.88
+    match:
+      service_uuid_any: ["FE2C"]
+
+  - label: "Eddystone Beacon"
+    vendor: "Google Ecosystem"
+    product_category: "location_beacon"
+    rf_device_class: "ble_beacon"
+    role: "beacon"
+    confidence: 0.93
+    match:
+      service_uuid_any: ["FEAA"]
+
+  - label: "BTHome Sensor"
+    vendor: "BTHome"
+    product_category: "sensor"
+    rf_device_class: "ble_sensor"
+    role: "sensor_tag"
+    confidence: 0.90
+    match:
+      service_data_uuid_any: ["FCD2"]
+
+  - label: "BLE HID Peripheral"
+    vendor: null
+    product_category: "human_interface"
+    rf_device_class: "ble_accessory"
+    role: "audio_accessory"
+    confidence: 0.78
+    match:
+      service_uuid_any: ["1812"]
+
+  - label: "Heart Rate Wearable"
+    vendor: null
+    product_category: "wearable"
+    rf_device_class: "ble_wearable"
+    role: "wearable"
+    confidence: 0.74
+    match:
+      service_uuid_any: ["180D"]

@@ -1,0 +1,742 @@
+# =============================================================================
+# PROJECT:      GHOSTRECON
+# FILE:         backend/config/categories.yaml
+# VERSION:      v7.3.0 (EU RESIDENTIAL DOMINANCE + ENCRYPTION INTEL EXPANDED)
+# LAST UPDATED: 2026-03-02
+#
+# =============================================================================
+# ARCHITECTURE NOTES
+# -----------------------------------------------------------------------------
+# - This file is the STRATEGIC INTENT LAYER of GhostRecon
+# - No scan logic is hardcoded in Python
+# - Recon / Session scheduling builds presets dynamically from this file
+# - Intel classifier uses these intents to bias category selection + risk scoring
+# - This file defines EXPECTATIONS (behavior, modulation, encryption likelihood),
+#   not exploit procedures.
+#
+# PHASE 1 ADDITION (v7.3.0)
+# -----------------------------------------------------------------------------
+# - Adds EU residential mixed-environment categories for:
+#     Sub-GHz (433/868): remotes, fixed switches, alarms, weather sensors, meters
+#     Zigbee (2.4): hubs + end devices
+#     BLE (2.4): beacons + personal devices
+# - Adds explicit encryption_profile blocks to ALL categories to support:
+#     "what kind of encryption is expected" intelligence outputs in UI/API
+# =============================================================================
+
+
+# =============================================================================
+# CATEGORIES (FULL INTELLIGENCE MODEL)
+# =============================================================================
+
+categories:
+
+  # ===========================================================================
+  # DRONES — CONTROL & TELEMETRY
+  # ===========================================================================
+  drone:
+    description: Drone telemetry and control sub-GHz links
+    risk_level: high
+    target_value: 4
+    behavior: continuous
+    environment: mobility
+
+    decoder_profile:
+      modulation: fsk
+      symbol_rate_hint: 50000
+      bandwidth_khz: 200
+      rolling_expected: false
+      frame_length_hint: 128
+      entropy_expected: high
+
+    rf_profile:
+      fhss_expected: true
+      control_channel_bias: 0.7
+      telemetry_bias: 0.9
+      encryption_likelihood: high
+
+    encryption_profile:
+      expected: "link-layer crypto likely"
+      common_schemes:
+        - "proprietary stream/AES-like (vendor-specific)"
+        - "rolling session keys / pairing keys (varies)"
+      key_management:
+        - "paired controller ↔ drone link"
+        - "session or device key (varies)"
+      notes:
+        - "Treat as high-entropy traffic; do not assume replayable."
+
+    offensive_profile:
+      replay_feasible: false
+      command_injection_feasible: low
+      jamming_resilience: high
+      requires_sync_capture: true
+
+    bands:
+      - start_mhz: 433.0
+        end_mhz: 435.0
+        step_khz: 50
+      - start_mhz: 902.0
+        end_mhz: 928.0
+        step_khz: 250
+
+
+  # ===========================================================================
+  # INDUSTRIAL ROBOTICS / UGV
+  # ===========================================================================
+  robotics_ugv:
+    description: Industrial robots and unmanned ground vehicles
+    risk_level: critical
+    target_value: 5
+    behavior: mixed
+    environment: industrial
+
+    decoder_profile:
+      modulation: fsk
+      symbol_rate_hint: 38400
+      bandwidth_khz: 250
+      rolling_expected: false
+      frame_length_hint: 256
+      entropy_expected: medium
+
+    rf_profile:
+      fhss_expected: false
+      control_channel_bias: 0.8
+      telemetry_bias: 0.6
+      encryption_likelihood: medium
+
+    encryption_profile:
+      expected: "mixed (often proprietary, sometimes none)"
+      common_schemes:
+        - "vendor proprietary framing + optional crypto"
+        - "AES-CTR/AES-CBC-like (if implemented; vendor-specific)"
+      key_management:
+        - "commissioned device key or controller key"
+      notes:
+        - "Expect structured telemetry; crypto presence varies by vendor/era."
+
+    offensive_profile:
+      replay_feasible: medium
+      command_injection_feasible: medium
+      jamming_resilience: medium
+      requires_sync_capture: true
+
+    bands:
+      - start_mhz: 433.0
+        end_mhz: 435.0
+        step_khz: 50
+      - start_mhz: 868.0
+        end_mhz: 870.0
+        step_khz: 125
+      - start_mhz: 902.0
+        end_mhz: 928.0
+        step_khz: 250
+
+
+  # ===========================================================================
+  # VEHICLE REMOTES
+  # ===========================================================================
+  vehicle_remote:
+    description: Automotive key fobs and entry systems
+    risk_level: high
+    target_value: 5
+    behavior: burst
+    environment: mobility
+
+    decoder_profile:
+      modulation: ask
+      symbol_rate_hint: 2000
+      bandwidth_khz: 100
+      rolling_expected: true
+      frame_length_hint: 64
+      entropy_expected: high
+
+    rf_profile:
+      fhss_expected: false
+      control_channel_bias: 1.0
+      telemetry_bias: 0.1
+      encryption_likelihood: high
+
+    encryption_profile:
+      expected: "rolling-code / challenge-response typical"
+      common_schemes:
+        - "rolling code (Keeloq-like families / proprietary variants)"
+        - "challenge-response (varies by OEM)"
+      key_management:
+        - "factory/programmed secrets"
+        - "paired receiver ↔ remote secret"
+      notes:
+        - "High entropy + rolling expected; treat replay feasibility as low/uncertain by default."
+
+    offensive_profile:
+      replay_feasible: true
+      command_injection_feasible: low
+      jamming_resilience: medium
+      requires_sync_capture: true
+
+    bands:
+      - start_mhz: 315.0
+        end_mhz: 316.0
+        step_khz: 25
+      - start_mhz: 433.7
+        end_mhz: 434.1
+        step_khz: 10
+
+
+  # ===========================================================================
+  # SMART HOME IOT (LEGACY / GENERIC)
+  # ===========================================================================
+  smarthome:
+    description: Consumer smart home devices (generic Sub-GHz)
+    risk_level: medium
+    target_value: 3
+    behavior: burst
+    environment: residential
+
+    decoder_profile:
+      modulation: ask
+      symbol_rate_hint: 1000
+      bandwidth_khz: 100
+      rolling_expected: false
+      frame_length_hint: 32
+      entropy_expected: medium
+
+    rf_profile:
+      fhss_expected: false
+      control_channel_bias: 0.6
+      telemetry_bias: 0.4
+      encryption_likelihood: low
+
+    encryption_profile:
+      expected: "often none or weak obfuscation"
+      common_schemes:
+        - "fixed code"
+        - "simple checksum/CRC"
+        - "light obfuscation (vendor-specific)"
+      key_management:
+        - "none or static preset DIP/factory config"
+      notes:
+        - "Common for cheap 433 MHz remotes/sockets; many are not encrypted."
+
+    offensive_profile:
+      replay_feasible: true
+      command_injection_feasible: high
+      jamming_resilience: low
+      requires_sync_capture: false
+
+    bands:
+      - start_mhz: 433.05
+        end_mhz: 434.79
+        step_khz: 25
+      - start_mhz: 868.0
+        end_mhz: 868.6
+        step_khz: 25
+
+
+  # ===========================================================================
+  # EU RESIDENTIAL — SUB-GHz FIXED SWITCHES (433 MHz)
+  # ===========================================================================
+  eu_subghz_fixed_switch:
+    description: EU residential 433 MHz fixed-code switches, sockets, and simple remotes
+    risk_level: medium
+    target_value: 3
+    behavior: burst
+    environment: residential
+
+    decoder_profile:
+      modulation: ask
+      symbol_rate_hint: 800
+      bandwidth_khz: 80
+      rolling_expected: false
+      frame_length_hint: 24
+      entropy_expected: low
+
+    rf_profile:
+      fhss_expected: false
+      control_channel_bias: 0.9
+      telemetry_bias: 0.1
+      encryption_likelihood: low
+
+    encryption_profile:
+      expected: "typically none"
+      common_schemes:
+        - "fixed code / tri-state / DIP-coded"
+        - "CRC/checksum only"
+      key_management:
+        - "static configuration (DIP/factory)"
+      notes:
+        - "Expect repeated identical frames; very high repeatability."
+
+    offensive_profile:
+      replay_feasible: true
+      command_injection_feasible: medium
+      jamming_resilience: low
+      requires_sync_capture: false
+
+    bands:
+      - start_mhz: 433.70
+        end_mhz: 434.10
+        step_khz: 10
+
+
+  # ===========================================================================
+  # EU RESIDENTIAL — SUB-GHz ROLLING REMOTES (433 / 868)
+  # ===========================================================================
+  eu_subghz_rolling_remote:
+    description: EU residential rolling-code remotes (gates, garages, shutters)
+    risk_level: high
+    target_value: 5
+    behavior: burst
+    environment: residential
+
+    decoder_profile:
+      modulation: ask
+      symbol_rate_hint: 2400
+      bandwidth_khz: 120
+      rolling_expected: true
+      frame_length_hint: 64
+      entropy_expected: high
+
+    rf_profile:
+      fhss_expected: false
+      control_channel_bias: 1.0
+      telemetry_bias: 0.1
+      encryption_likelihood: high
+
+    encryption_profile:
+      expected: "rolling code / challenge-response common"
+      common_schemes:
+        - "rolling code families (vendor-specific)"
+        - "challenge-response (some systems)"
+      key_management:
+        - "paired secret per remote/receiver"
+      notes:
+        - "Treat as high-entropy burst traffic; prioritize identity fingerprinting + persistence."
+
+    offensive_profile:
+      replay_feasible: false
+      command_injection_feasible: low
+      jamming_resilience: medium
+      requires_sync_capture: true
+
+    bands:
+      - start_mhz: 433.70
+        end_mhz: 434.10
+        step_khz: 10
+      - start_mhz: 868.00
+        end_mhz: 868.60
+        step_khz: 25
+
+
+  # ===========================================================================
+  # EU RESIDENTIAL — WEATHER STATIONS / SENSORS (433 / 868)
+  # ===========================================================================
+  eu_subghz_weather_sensor:
+    description: EU residential weather stations and outdoor sensors (temp/humidity/rain/wind)
+    risk_level: low
+    target_value: 2
+    behavior: periodic
+    environment: residential
+
+    decoder_profile:
+      modulation: fsk
+      symbol_rate_hint: 9600
+      bandwidth_khz: 50
+      rolling_expected: false
+      frame_length_hint: 64
+      entropy_expected: medium
+
+    rf_profile:
+      fhss_expected: false
+      control_channel_bias: 0.2
+      telemetry_bias: 0.9
+      encryption_likelihood: low
+
+    encryption_profile:
+      expected: "usually none"
+      common_schemes:
+        - "CRC/checksum only"
+        - "simple ID + sensor payload"
+      key_management:
+        - "none"
+      notes:
+        - "Periodic bursts with stable timing; excellent for persistence + identity timelines."
+
+    offensive_profile:
+      replay_feasible: medium
+      command_injection_feasible: low
+      jamming_resilience: low
+      requires_sync_capture: false
+
+    bands:
+      - start_mhz: 433.05
+        end_mhz: 434.79
+        step_khz: 25
+      - start_mhz: 868.00
+        end_mhz: 868.60
+        step_khz: 25
+
+
+  # ===========================================================================
+  # EU RESIDENTIAL — WIRELESS ALARM SYSTEMS (868 preferred)
+  # ===========================================================================
+  eu_subghz_alarm_system:
+    description: EU wireless alarm sensors/keypads/sirens with periodic supervision beacons
+    risk_level: high
+    target_value: 4
+    behavior: mixed
+    environment: residential
+
+    decoder_profile:
+      modulation: fsk
+      symbol_rate_hint: 19200
+      bandwidth_khz: 100
+      rolling_expected: false
+      frame_length_hint: 128
+      entropy_expected: medium
+
+    rf_profile:
+      fhss_expected: false
+      control_channel_bias: 0.6
+      telemetry_bias: 0.6
+      encryption_likelihood: medium
+
+    encryption_profile:
+      expected: "varies by vendor; often some protection"
+      common_schemes:
+        - "proprietary crypto/obfuscation (vendor-specific)"
+        - "AES-like in newer systems (varies)"
+      key_management:
+        - "paired sensor ↔ hub keys"
+      notes:
+        - "Look for supervision periodicity + event bursts; classify infra vs leaf nodes."
+
+    offensive_profile:
+      replay_feasible: low
+      command_injection_feasible: low
+      jamming_resilience: medium
+      requires_sync_capture: true
+
+    bands:
+      - start_mhz: 868.00
+        end_mhz: 870.00
+        step_khz: 125
+
+
+  # ===========================================================================
+  # EU RESIDENTIAL — SMART METERS (Wireless M-Bus / proprietary @ 868)
+  # ===========================================================================
+  eu_wireless_mbus_meter:
+    description: EU smart meters and metering telemetry (Wireless M-Bus-like periodic bursts)
+    risk_level: medium
+    target_value: 4
+    behavior: periodic
+    environment: residential
+
+    decoder_profile:
+      modulation: fsk
+      symbol_rate_hint: 32768
+      bandwidth_khz: 100
+      rolling_expected: false
+      frame_length_hint: 256
+      entropy_expected: medium
+
+    rf_profile:
+      fhss_expected: false
+      control_channel_bias: 0.1
+      telemetry_bias: 1.0
+      encryption_likelihood: medium
+
+    encryption_profile:
+      expected: "often protected (newer deployments)"
+      common_schemes:
+        - "Wireless M-Bus security modes (AES-based in secured profiles)"
+        - "vendor proprietary framing (some regions)"
+      key_management:
+        - "utility provisioned keys / device keys"
+      notes:
+        - "Even if encrypted, timing + persistence is valuable for discovery baselines."
+
+    offensive_profile:
+      replay_feasible: low
+      command_injection_feasible: low
+      jamming_resilience: low
+      requires_sync_capture: false
+
+    bands:
+      - start_mhz: 868.00
+        end_mhz: 869.00
+        step_khz: 25
+
+
+  # ===========================================================================
+  # EU RESIDENTIAL — ZIGBEE HUB / COORDINATOR (2.4 GHz)
+  # ===========================================================================
+  eu_zigbee_hub:
+    description: Zigbee coordinators / hubs (Hue, IKEA, Aqara, etc.) — mesh infrastructure
+    risk_level: medium
+    target_value: 4
+    behavior: periodic
+    environment: residential
+
+    decoder_profile:
+      modulation: dsss
+      symbol_rate_hint: 2000000
+      bandwidth_khz: 2000
+      rolling_expected: false
+      frame_length_hint: 64
+      entropy_expected: medium
+
+    rf_profile:
+      fhss_expected: false
+      control_channel_bias: 0.6
+      telemetry_bias: 0.6
+      encryption_likelihood: medium
+
+    encryption_profile:
+      expected: "Zigbee AES-128 at network/app layers (if properly configured)"
+      common_schemes:
+        - "Zigbee network key (AES-128)"
+        - "application link keys (AES-128, optional)"
+      key_management:
+        - "commissioning/join process; trust center role"
+      notes:
+        - "Discovery uses occupancy + persistence; not full decode required."
+
+    offensive_profile:
+      replay_feasible: low
+      command_injection_feasible: low
+      jamming_resilience: low
+      requires_sync_capture: false
+
+    bands:
+      - start_mhz: 2405.0
+        end_mhz: 2480.0
+        step_khz: 5000
+
+
+  # ===========================================================================
+  # EU RESIDENTIAL — ZIGBEE END DEVICES (bulbs, plugs, sensors)
+  # ===========================================================================
+  eu_zigbee_end_device:
+    description: Zigbee end devices (bulbs, plugs, sensors) — mesh leaves
+    risk_level: low
+    target_value: 3
+    behavior: mixed
+    environment: residential
+
+    decoder_profile:
+      modulation: dsss
+      symbol_rate_hint: 2000000
+      bandwidth_khz: 2000
+      rolling_expected: false
+      frame_length_hint: 64
+      entropy_expected: medium
+
+    rf_profile:
+      fhss_expected: false
+      control_channel_bias: 0.4
+      telemetry_bias: 0.6
+      encryption_likelihood: medium
+
+    encryption_profile:
+      expected: "Zigbee AES-128 typical"
+      common_schemes:
+        - "network key AES-128"
+        - "link keys AES-128 (optional)"
+      key_management:
+        - "joined via coordinator/trust center"
+      notes:
+        - "Often bursty with user actions; sensors may be periodic."
+
+    offensive_profile:
+      replay_feasible: low
+      command_injection_feasible: low
+      jamming_resilience: low
+      requires_sync_capture: false
+
+    bands:
+      - start_mhz: 2405.0
+        end_mhz: 2480.0
+        step_khz: 5000
+
+
+  # ===========================================================================
+  # EU RESIDENTIAL — BLE BEACONS / TAGS (advertising-heavy)
+  # ===========================================================================
+  eu_ble_beacon:
+    description: BLE beacons / tags / proximity devices (advertising-centric)
+    risk_level: low
+    target_value: 2
+    behavior: periodic
+    environment: residential
+
+    decoder_profile:
+      modulation: gmsk
+      symbol_rate_hint: 1000000
+      bandwidth_khz: 2000
+      rolling_expected: false
+      frame_length_hint: 32
+      entropy_expected: medium
+
+    rf_profile:
+      fhss_expected: true
+      control_channel_bias: 0.1
+      telemetry_bias: 0.7
+      encryption_likelihood: low
+
+    encryption_profile:
+      expected: "advertising payload typically not encrypted"
+      common_schemes:
+        - "ephemeral identifiers (privacy features on some ecosystems)"
+      key_management:
+        - "app/account-bound (ecosystem-dependent)"
+      notes:
+        - "Detection focuses on advertising channel periodicity + density."
+
+    offensive_profile:
+      replay_feasible: low
+      command_injection_feasible: low
+      jamming_resilience: low
+      requires_sync_capture: false
+
+    bands:
+      - start_mhz: 2402.0
+        end_mhz: 2480.0
+        step_khz: 24000
+
+
+  # ===========================================================================
+  # EU RESIDENTIAL — BLE PERSONAL DEVICES (phones, wearables)
+  # ===========================================================================
+  eu_ble_personal_device:
+    description: BLE personal devices (phones, watches, earbuds) — roaming + advertising + connections
+    risk_level: low
+    target_value: 2
+    behavior: mixed
+    environment: residential
+
+    decoder_profile:
+      modulation: gmsk
+      symbol_rate_hint: 1000000
+      bandwidth_khz: 2000
+      rolling_expected: false
+      frame_length_hint: 32
+      entropy_expected: medium
+
+    rf_profile:
+      fhss_expected: true
+      control_channel_bias: 0.2
+      telemetry_bias: 0.6
+      encryption_likelihood: high
+
+    encryption_profile:
+      expected: "BLE link encryption common for connections; advertising often clear"
+      common_schemes:
+        - "BLE LE Secure Connections (AES-CCM at link layer after pairing)"
+        - "legacy pairing (varies)"
+      key_management:
+        - "pairing/bonding keys (device-local)"
+      notes:
+        - "Discovery treats these as high-churn; focus on density + recurrence patterns."
+
+    offensive_profile:
+      replay_feasible: low
+      command_injection_feasible: low
+      jamming_resilience: low
+      requires_sync_capture: false
+
+    bands:
+      - start_mhz: 2402.0
+        end_mhz: 2480.0
+        step_khz: 24000
+
+
+# =============================================================================
+# SCAN PRESETS (CONFIG-DRIVEN — NO HARDCODE)
+# =============================================================================
+
+presets:
+
+  tactical_subghz_sweep:
+    type: system
+    dwell_seconds: 45
+    frequencies_mhz:
+      - 315.0
+      - 433.92
+      - 868.3
+      - 915.0
+
+  ble_advertising:
+    type: system
+    dwell_seconds: 20
+    frequencies_mhz:
+      - 2402
+      - 2426
+      - 2480
+
+  wideband_iot:
+    type: system
+    dwell_seconds: 60
+    frequencies_mhz:
+      - 2402
+      - 2405
+      - 2412
+      - 2425
+      - 2426
+      - 2437
+      - 2450
+      - 2462
+      - 2475
+      - 2480
+      - 433.92
+      - 868.3
+      - 868.95
+      - 869.525
+      - 915.0
+
+  iot_lab_efficient_v1:
+    type: system
+    dwell_seconds: 30
+    frequencies_mhz:
+      - 2402
+      - 2405
+      - 2412
+      - 2425
+      - 2426
+      - 2437
+      - 2450
+      - 2462
+      - 2475
+      - 2480
+      - 433.92
+      - 868.30
+      - 868.95
+      - 869.525
+
+  # --------------------------------------------------------------------------
+  # PHASE 1: EU Residential Mixed Environment Preset (Sub-GHz + Zigbee + BLE)
+  # --------------------------------------------------------------------------
+  # NOTE:
+  # - Presets are a simple frequency list + dwell.
+  # - Deterministic rotation timing is implemented in SessionController
+  #   dominance mode (eu_residential_mixed_v1 plan).
+  # - This preset exists so UI/API can select the intended frequency set.
+  eu_residential_mixed_v1:
+    type: system
+    dwell_seconds: 15
+    frequencies_mhz:
+      # Sub-GHz anchors (EU)
+      - 433.92
+      - 434.08
+      - 868.30
+      - 868.95
+      # BLE advertising channels
+      - 2402
+      - 2426
+      - 2480
+      # Zigbee sampling channels (subset)
+      - 2405
+      - 2425
+      - 2450
+      - 2475

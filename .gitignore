@@ -1,0 +1,23 @@
+# runtime
+logs/
+*.log
+__pycache__/
+.pytest_cache/
+backend/.venv/
+
+# frontend
+frontend/node_modules/
+frontend/dist/
+frontend/public/config.js
+
+# artifacts
+evidence/
+rf_reports/
+scripts/evidence/
+
+# binary
+*.pcap
+*.pcapng
+*.cap
+*.bin
+*.iq

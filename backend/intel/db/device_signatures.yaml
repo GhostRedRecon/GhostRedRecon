@@ -1,0 +1,351 @@
+version: "2026-03-06"
+
+purpose: >
+  RF device fingerprinting reference for GhostRecon.
+  Used by SignalEngine and DeviceBehaviorEngine to infer device types
+  from RF characteristics including frequency, bandwidth, modulation,
+  burst timing patterns and protocol hints.
+
+# =====================================================================
+# PROTOCOL FAMILIES
+# =====================================================================
+
+protocol_families:
+
+  zigbee_ieee802154_24ghz:
+    band_mhz: [2400.0, 2483.5]
+    modulation: ["DSSS-OQPSK"]
+    channel_bw_mhz: 2
+    data_rate: "250 kbps"
+    encryption: "AES-128"
+    burst_patterns:
+      beacon_ms: [100, 120]
+      sensor_trigger_ms: [5, 20]
+
+  bluetooth_le:
+    band_mhz: [2400.0, 2483.5]
+    modulation: ["GFSK"]
+    hopping: true
+    channels: 40
+    encryption: "AES-CCM"
+    burst_patterns:
+      advertising_interval_ms: [20, 10240]
+
+  bluetooth_classic_bredr:
+    band_mhz: [2402.0, 2480.0]
+    modulation: ["GFSK", "π/4-DQPSK", "8DPSK"]
+    hopping: true
+    channels: 79
+    encryption: "Bluetooth Link Layer"
+
+  wifi_24ghz:
+    band_mhz: [2400.0, 2483.5]
+    modulation: ["OFDM", "DSSS"]
+    channel_bw_mhz: [20, 40]
+    encryption: ["WPA2", "WPA3"]
+    burst_patterns:
+      beacon_ms: [100]
+
+  srd_433_eu:
+    band_mhz: [433.05, 434.79]
+    modulation: ["OOK", "ASK", "FSK"]
+    typical_bw_khz: [5, 40]
+
+  wireless_mbus_868_eu:
+    band_mhz: [863.0, 870.0]
+    modulation: ["2-FSK"]
+    typical_bw_khz: [200, 350]
+
+  lora_phy_subghz:
+    bands:
+      eu868: [863.0, 870.0]
+      us915: [902.0, 928.0]
+    modulation: ["LoRa CSS"]
+    bandwidth_khz: [125, 250, 500]
+
+# =====================================================================
+# DEVICE PROFILES
+# =====================================================================
+
+device_profiles:
+
+# -------------------------------------------------
+# Zigbee Ecosystem
+# -------------------------------------------------
+
+- device: "Xiaomi Aqara Motion Sensor"
+  vendor: "Xiaomi"
+  protocol_family: "zigbee_ieee802154_24ghz"
+  ecosystem: "Zigbee"
+  expected_bw_khz: [1500, 3000]
+  burst_interval_ms: [2000, 5000]
+  category: "IoT Sensor"
+
+- device: "Philips Hue Light Bulb"
+  vendor: "Philips"
+  protocol_family: "zigbee_ieee802154_24ghz"
+  ecosystem: "Hue Zigbee"
+  expected_bw_khz: [1500, 3000]
+  burst_interval_ms: [50, 200]
+
+- device: "IKEA Tradfri Switch"
+  vendor: "IKEA"
+  protocol_family: "zigbee_ieee802154_24ghz"
+  expected_bw_khz: [1500, 3000]
+  category: "Smart Switch"
+
+- device: "IKEA Tradfri Bulb"
+  vendor: "IKEA"
+  protocol_family: "zigbee_ieee802154_24ghz"
+  ecosystem: "IKEA Zigbee"
+  expected_bw_khz: [1500, 3000]
+  burst_interval_ms: [100, 60000]
+  category: "Smart Bulb"
+
+- device: "IKEA Dirigera Hub"
+  vendor: "IKEA"
+  protocol_family: "zigbee_ieee802154_24ghz"
+  ecosystem: "IKEA Zigbee"
+  expected_bw_khz: [1500, 3000]
+  burst_interval_ms: [50, 5000]
+  category: "Hub"
+
+- device: "IKEA Parasoll Door Sensor"
+  vendor: "IKEA"
+  protocol_family: "zigbee_ieee802154_24ghz"
+  ecosystem: "IKEA Zigbee"
+  expected_bw_khz: [1500, 3000]
+  burst_interval_ms: [1000, 600000]
+  category: "Door Sensor"
+
+- device: "IKEA Vallhorn Motion Sensor"
+  vendor: "IKEA"
+  protocol_family: "zigbee_ieee802154_24ghz"
+  ecosystem: "IKEA Zigbee"
+  expected_bw_khz: [1500, 3000]
+  burst_interval_ms: [1000, 600000]
+  category: "Motion Sensor"
+
+- device: "IKEA Badring Water Leak Sensor"
+  vendor: "IKEA"
+  protocol_family: "zigbee_ieee802154_24ghz"
+  ecosystem: "IKEA Zigbee"
+  expected_bw_khz: [1500, 3000]
+  burst_interval_ms: [1000, 600000]
+  category: "Leak Sensor"
+
+- device: "Tuya Zigbee Smart Plug"
+  vendor: "Tuya"
+  protocol_family: "zigbee_ieee802154_24ghz"
+  expected_bw_khz: [1500, 3000]
+
+# -------------------------------------------------
+# BLE Trackers
+# -------------------------------------------------
+
+- device: "Apple AirTag"
+  vendor: "Apple"
+  protocol_family: "bluetooth_le"
+  expected_bw_khz: [800, 1500]
+  burst_interval_ms: [2000, 5000]
+  ecosystem: "Apple Find My"
+  security: "End-to-end encrypted"
+
+- device: "Samsung SmartTag"
+  vendor: "Samsung"
+  protocol_family: "bluetooth_le"
+  expected_bw_khz: [800, 1500]
+  ecosystem: "Samsung SmartThings"
+
+- device: "Tile Tracker"
+  vendor: "Tile"
+  protocol_family: "bluetooth_le"
+  expected_bw_khz: [800, 1500]
+  burst_interval_ms: [2000, 3000]
+
+- device: "Chipolo Tracker"
+  vendor: "Chipolo"
+  protocol_family: "bluetooth_le"
+  expected_bw_khz: [800, 1500]
+
+# -------------------------------------------------
+# BLE Wearables
+# -------------------------------------------------
+
+- device: "Apple Watch"
+  vendor: "Apple"
+  protocol_family: "bluetooth_le"
+  expected_bw_khz: [800, 1500]
+  ecosystem: "Apple"
+
+- device: "Fitbit Tracker"
+  vendor: "Google"
+  protocol_family: "bluetooth_le"
+  expected_bw_khz: [800, 1500]
+
+- device: "Garmin Fitness Tracker"
+  vendor: "Garmin"
+  protocol_family: "bluetooth_le"
+  expected_bw_khz: [800, 1500]
+
+- device: "iPhone"
+  vendor: "Apple"
+  protocol_family: "bluetooth_le"
+  expected_bw_khz: [800, 1500]
+  ecosystem: "Apple"
+  category: "Phone"
+
+- device: "Samsung Galaxy Phone"
+  vendor: "Samsung"
+  protocol_family: "bluetooth_le"
+  expected_bw_khz: [800, 1500]
+  ecosystem: "Galaxy"
+  category: "Phone"
+
+- device: "Google Pixel Phone"
+  vendor: "Google"
+  protocol_family: "bluetooth_le"
+  expected_bw_khz: [800, 1500]
+  ecosystem: "Pixel"
+  category: "Phone"
+
+- device: "Samsung Galaxy Watch"
+  vendor: "Samsung"
+  protocol_family: "bluetooth_le"
+  expected_bw_khz: [800, 1500]
+  ecosystem: "Galaxy"
+  category: "Wearable"
+
+- device: "Apple AirPods"
+  vendor: "Apple"
+  protocol_family: "bluetooth_le"
+  expected_bw_khz: [800, 1500]
+  ecosystem: "Apple"
+  category: "Audio Accessory"
+
+- device: "Samsung Galaxy Buds"
+  vendor: "Samsung"
+  protocol_family: "bluetooth_le"
+  expected_bw_khz: [800, 1500]
+  ecosystem: "Galaxy"
+  category: "Audio Accessory"
+
+- device: "Samsung Smart TV"
+  vendor: "Samsung"
+  protocol_family: "bluetooth_le"
+  expected_bw_khz: [800, 1500]
+  category: "Entertainment"
+
+- device: "LG Smart TV"
+  vendor: "LG"
+  protocol_family: "bluetooth_le"
+  expected_bw_khz: [800, 1500]
+  category: "Entertainment"
+
+- device: "Orange TV Decoder"
+  vendor: "Orange"
+  protocol_family: "bluetooth_le"
+  expected_bw_khz: [800, 1500]
+  category: "Set-Top Box"
+
+- device: "JBL Bluetooth Speaker"
+  vendor: "JBL"
+  protocol_family: "bluetooth_classic_bredr"
+  expected_bw_khz: [800, 1500]
+  category: "Audio"
+
+- device: "Bose Speaker"
+  vendor: "Bose"
+  protocol_family: "bluetooth_classic_bredr"
+  expected_bw_khz: [800, 1500]
+  category: "Audio"
+
+# -------------------------------------------------
+# WiFi Devices
+# -------------------------------------------------
+
+- device: "TP-Link WiFi Router"
+  vendor: "TP-Link"
+  protocol_family: "wifi_24ghz"
+  expected_bw_khz: [15000, 25000]
+  category: "Router"
+
+- device: "Netgear WiFi Router"
+  vendor: "Netgear"
+  protocol_family: "wifi_24ghz"
+
+- device: "Ring Security Camera"
+  vendor: "Amazon"
+  protocol_family: "wifi_24ghz"
+
+- device: "Google Nest Camera"
+  vendor: "Google"
+  protocol_family: "wifi_24ghz"
+
+- device: "Amazon Echo Speaker"
+  vendor: "Amazon"
+  protocol_family: "wifi_24ghz"
+
+- device: "Sonos Speaker"
+  vendor: "Sonos"
+  protocol_family: "wifi_24ghz"
+
+# -------------------------------------------------
+# 433 MHz Devices
+# -------------------------------------------------
+
+- device: "PT2262 Remote Control"
+  vendor: "Generic"
+  protocol_family: "srd_433_eu"
+  expected_bw_khz: [5, 20]
+  modulation: "OOK"
+  category: "Remote"
+
+- device: "Xiaomi Door Sensor (433)"
+  vendor: "Xiaomi"
+  protocol_family: "srd_433_eu"
+
+- device: "Weather Station Sensor"
+  vendor: "Generic"
+  protocol_family: "srd_433_eu"
+
+- device: "Garage Door Remote"
+  vendor: "Chamberlain"
+  protocol_family: "srd_433_eu"
+
+# -------------------------------------------------
+# Smart Metering (868 MHz)
+# -------------------------------------------------
+
+- device: "Kamstrup Smart Meter"
+  vendor: "Kamstrup"
+  protocol_family: "wireless_mbus_868_eu"
+
+- device: "Landis+Gyr Smart Meter"
+  vendor: "Landis+Gyr"
+  protocol_family: "wireless_mbus_868_eu"
+
+- device: "Diehl Water Meter"
+  vendor: "Diehl"
+  protocol_family: "wireless_mbus_868_eu"
+
+# -------------------------------------------------
+# LoRa Devices
+# -------------------------------------------------
+
+- device: "Dragino LoRa Sensor"
+  vendor: "Dragino"
+  protocol_family: "lora_phy_subghz"
+  region: "eu868"
+
+- device: "Milesight LoRa Sensor"
+  vendor: "Milesight"
+  protocol_family: "lora_phy_subghz"
+
+- device: "Kerlink LoRa Gateway"
+  vendor: "Kerlink"
+  protocol_family: "lora_phy_subghz"
+
+- device: "Multitech LoRa Gateway"
+  vendor: "Multitech"
+  protocol_family: "lora_phy_subghz"

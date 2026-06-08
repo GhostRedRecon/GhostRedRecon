@@ -1,0 +1,223 @@
+# =============================================================================
+# PROJECT:      GHOSTRECON
+# FILE:         backend/intel/db/protocol_device_profiles.yaml
+# VERSION:      v1.0.0
+# LAST UPDATED: 2026-03-04
+#
+# =============================================================================
+# ARCHITECTURE
+# =============================================================================
+#
+# ReconEngine
+#      ↓
+# SignalEngine
+#      ↓
+# ProtocolSignatureEngine
+#      ↓
+# DeviceClassifierV2
+#      ↓
+# DeviceBehaviorEngine
+#      ↓
+# protocol_device_profiles.yaml  (THIS FILE)
+#
+# =============================================================================
+# RESPONSIBILITY
+# =============================================================================
+#
+# Provide protocol-level device classification.
+#
+# Maps:
+#   RF bandwidth
+#   frequency band
+#   protocol family
+#
+# → into device classes.
+#
+# This database enables GhostRecon to identify:
+#
+#   WiFi infrastructure
+#   Zigbee IoT devices
+#   BLE peripherals
+#   SubGHz sensors
+#   Smart meters
+#   LoRa telemetry
+#
+# WITHOUT decoding packets.
+#
+# =============================================================================
+# DESIGN PRINCIPLES
+# =============================================================================
+#
+# ✔ Protocol-first classification
+# ✔ Hardware-agnostic device inference
+# ✔ SDR-friendly detection parameters
+# ✔ Passive RF analysis only
+# ✔ Compatible with HackRF bandwidth limits
+#
+# =============================================================================
+
+device_profiles:
+
+# -------------------------------------------------
+# ZIGBEE DEVICES (2.4 GHz)
+# -------------------------------------------------
+
+- device: "Zigbee Motion Sensor"
+  protocol_family: "zigbee_ieee802154_24ghz"
+  expected_bw_khz: [1500, 3000]
+
+- device: "Zigbee Door Sensor"
+  protocol_family: "zigbee_ieee802154_24ghz"
+  expected_bw_khz: [1500, 3000]
+
+- device: "Zigbee Smart Plug"
+  protocol_family: "zigbee_ieee802154_24ghz"
+  expected_bw_khz: [1500, 3000]
+
+- device: "Zigbee Temperature Sensor"
+  protocol_family: "zigbee_ieee802154_24ghz"
+  expected_bw_khz: [1500, 3000]
+
+- device: "Zigbee Humidity Sensor"
+  protocol_family: "zigbee_ieee802154_24ghz"
+  expected_bw_khz: [1500, 3000]
+
+- device: "Zigbee Light Bulb"
+  protocol_family: "zigbee_ieee802154_24ghz"
+  expected_bw_khz: [1500, 3000]
+
+- device: "Zigbee Wall Switch"
+  protocol_family: "zigbee_ieee802154_24ghz"
+  expected_bw_khz: [1500, 3000]
+
+- device: "Zigbee Smart Lock"
+  protocol_family: "zigbee_ieee802154_24ghz"
+  expected_bw_khz: [1500, 3000]
+
+- device: "Zigbee Hub / Coordinator"
+  protocol_family: "zigbee_ieee802154_24ghz"
+  expected_bw_khz: [1500, 3000]
+
+- device: "Zigbee Router Node"
+  protocol_family: "zigbee_ieee802154_24ghz"
+  expected_bw_khz: [1500, 3000]
+
+
+# -------------------------------------------------
+# BLE DEVICES
+# -------------------------------------------------
+
+- device: "BLE Beacon"
+  protocol_family: "bluetooth_le"
+  expected_bw_khz: [800, 1500]
+
+- device: "BLE Fitness Tracker"
+  protocol_family: "bluetooth_le"
+  expected_bw_khz: [800, 1500]
+
+- device: "BLE Smart Watch"
+  protocol_family: "bluetooth_le"
+  expected_bw_khz: [800, 1500]
+
+- device: "BLE Asset Tracker"
+  protocol_family: "bluetooth_le"
+  expected_bw_khz: [800, 1500]
+
+- device: "BLE Smart Lock"
+  protocol_family: "bluetooth_le"
+  expected_bw_khz: [800, 1500]
+
+- device: "BLE Medical Sensor"
+  protocol_family: "bluetooth_le"
+  expected_bw_khz: [800, 1500]
+
+- device: "BLE Keyboard / Mouse"
+  protocol_family: "bluetooth_le"
+  expected_bw_khz: [800, 1500]
+
+- device: "BLE Audio Device"
+  protocol_family: "bluetooth_classic_bredr"
+  expected_bw_khz: [800, 1500]
+
+
+# -------------------------------------------------
+# WIFI DEVICES
+# -------------------------------------------------
+
+- device: "WiFi Router"
+  protocol_family: "wifi_24ghz"
+  expected_bw_khz: [15000, 25000]
+
+- device: "WiFi Access Point"
+  protocol_family: "wifi_24ghz"
+  expected_bw_khz: [15000, 25000]
+
+- device: "WiFi Camera"
+  protocol_family: "wifi_24ghz"
+  expected_bw_khz: [15000, 25000]
+
+- device: "WiFi Smart TV"
+  protocol_family: "wifi_24ghz"
+  expected_bw_khz: [15000, 25000]
+
+- device: "WiFi Laptop"
+  protocol_family: "wifi_24ghz"
+  expected_bw_khz: [15000, 25000]
+
+- device: "WiFi Smartphone"
+  protocol_family: "wifi_24ghz"
+  expected_bw_khz: [15000, 25000]
+
+- device: "WiFi Smart Speaker"
+  protocol_family: "wifi_24ghz"
+  expected_bw_khz: [15000, 25000]
+
+- device: "WiFi Mesh Node"
+  protocol_family: "wifi_24ghz"
+  expected_bw_khz: [15000, 25000]
+
+
+# -------------------------------------------------
+# SUB-GHZ DEVICES (433 MHz)
+# -------------------------------------------------
+
+- device: "433MHz Door Sensor"
+  protocol_family: "srd_433_eu"
+  expected_bw_khz: [5, 40]
+
+- device: "433MHz Remote Control"
+  protocol_family: "srd_433_eu"
+  expected_bw_khz: [5, 40]
+
+- device: "433MHz Weather Sensor"
+  protocol_family: "srd_433_eu"
+  expected_bw_khz: [5, 40]
+
+- device: "433MHz Thermometer"
+  protocol_family: "srd_433_eu"
+  expected_bw_khz: [5, 40]
+
+- device: "433MHz Alarm Sensor"
+  protocol_family: "srd_433_eu"
+  expected_bw_khz: [5, 40]
+
+
+# -------------------------------------------------
+# LORA DEVICES
+# -------------------------------------------------
+
+- device: "LoRa Sensor Node"
+  protocol_family: "lora_phy_subghz"
+  expected_bw_khz: [100, 500]
+
+- device: "LoRa Gateway"
+  protocol_family: "lora_phy_subghz"
+  expected_bw_khz: [100, 500]
+
+- device: "LoRa Tracker"
+  protocol_family: "lora_phy_subghz"
+  expected_bw_khz: [100, 500]
+
+- device: "LoRa Smart Meter"
+  protocol_family: "lora_phy_subghz"
+  expected_bw_khz: [100, 500]
