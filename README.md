@@ -3,24 +3,65 @@
 [![CI](https://github.com/GhostRedRecon/GhostRedRecon/actions/workflows/ci.yml/badge.svg)](https://github.com/GhostRedRecon/GhostRedRecon/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Linux-lightgrey.svg)](#supported-operating-systems)
+[![Target](https://img.shields.io/badge/target-Kali%20Linux-557C94.svg)](#installation-on-kali-linux)
+[![Use](https://img.shields.io/badge/use-authorized%20labs%20only-red.svg)](#security-and-safety)
 
-**GhostRedRecon** is a Linux RED TEAM reconnaissance console for authorized WiFi, BLE, IoT, and camera assessment workflows. Public v1 combines a React operator GUI, a FastAPI backend, MK7AC packet-truth WiFi hunting, BLE NRF validation, Camera Hunt, and evidence-oriented audit panels into one local-first workstation tool. SDR HKRF and Hunt Drones remain hidden for v2.0 validation.
+**GhostRedRecon** is a local-first Linux red-team reconnaissance console for authorized WiFi, BLE, IoT, and camera assessment workflows. It turns a Kali workstation, an MK7AC WiFi adapter, and an nRF52840 BLE dongle into a browser-based operator console for evidence-backed discovery, validation, and review.
 
 Repository: <https://github.com/GhostRedRecon/GhostRedRecon>
 
 > Educational and authorized use only: GhostRedRecon is for learning, research, lab validation, owned-device testing, and explicitly authorized assessments. Do not use this project for unauthorized access, credential theft, illegal monitoring, network abuse, privacy invasion, or attacks against systems you do not own or have permission to test.
 
-## Highlights
+## Why People Try It
 
-- Red Team only public v1 operator surface.
-- React + Vite GUI with a local FastAPI backend.
+GhostRedRecon is built for the moment when a lab has wireless hardware plugged in, packets are moving, and the operator needs more than scattered terminal output. It brings WiFi packet truth, BLE device intelligence, camera-hunt evidence, runtime health, and session artifacts into one GUI so findings can be reviewed instead of guessed.
+
+Public v1 focuses on the workflows that are ready for authorized lab use:
+
 - WiFi MK7AC packet-truth hunting for AP/client discovery and evidence review.
 - Camera Hunt for WiFi, IP, and cloud-camera lead detection.
-- BLE NR5 / BLE NRF workflow for nRF52840-backed Bluetooth discovery and validation.
-- SDR HKRF and Hunt Drones source retained but hidden from public v1 for v2.0 validation.
+- BLE NR5 / BLE NRF workflows for nRF52840-backed Bluetooth discovery and validation.
 - Device inventory, identity snapshots, timelines, evidence folders, and operator status panels.
-- Kali Linux installation script for system tools, Python backend dependencies, and React frontend dependencies.
-- Local runtime artifacts kept out of GitHub release hygiene by design.
+- A React + Vite GUI backed by a local FastAPI runtime.
+- Kali Linux installation automation for system tools, Python dependencies, and frontend dependencies.
+
+## Quick Install
+
+Connect the nRF52840 BLE dongle and MK7AC WiFi adapter first, then run:
+
+```bash
+git clone https://github.com/GhostRedRecon/GhostRedRecon.git
+cd GhostRedRecon
+chmod +x scripts/install_kali_dependencies.sh scripts/start.sh scripts/stop.sh
+./scripts/install_kali_dependencies.sh
+./scripts/start.sh
+```
+
+Open the operator console:
+
+```text
+http://127.0.0.1:5174
+```
+
+If the GUI does not show the connected adapters after installation:
+
+```bash
+./scripts/stop.sh
+./scripts/start.sh
+```
+
+## Feature Status
+
+Some advanced features are intentionally disabled or hidden in public v1. This keeps the first public release focused on workflows that are ready for safer authorized lab use.
+
+| Area | Public v1 Status | Notes |
+| --- | --- | --- |
+| WiFi MK7 | Enabled | Validated path for monitor-mode WiFi discovery, packet evidence, and Camera Hunt input. |
+| Camera Hunt | Enabled | Produces evidence-backed camera leads; treat results as leads until corroborated. |
+| BLE NR5 / BLE NRF | Enabled | Built for nRF52840-backed Bluetooth discovery and selected-device validation. |
+| SDR HKRF | Source retained, GUI hidden | Reserved for v2.0 validation before public operator exposure. |
+| Hunt Drones | Source retained, GUI hidden | Reserved for v2.0 validation before public operator exposure. |
+| Runtime evidence export | Local only | Runtime logs, identities, captures, and evidence are ignored for public release hygiene. |
 
 ## What GhostRedRecon Can Do
 
@@ -403,17 +444,38 @@ If GhostRedRecon helps you, you can support development here:
 
 [Support this project - Buy Me a Coffee](https://buymeacoffee.com/navnish)
 
-## Acknowledgements
+## Powered By And Thanks
 
-GhostRedRecon builds on excellent Linux and open-source wireless/RF tooling, including:
+GhostRedRecon exists because the Linux security and open-source wireless communities already built an incredible foundation. Thank you to the maintainers, contributors, researchers, and operators behind these projects.
 
-- HackRF and the broader SDR ecosystem.
-- GNU Radio and osmosdr-compatible tooling.
-- Aircrack-ng, tcpdump, tshark/Wireshark, Kismet, Bettercap, nmap, arp-scan, and related Linux wireless tools.
-- BlueZ and Linux Bluetooth tooling.
-- React, Vite, FastAPI, Uvicorn, Python, and the Linux open-source communities.
+Special thanks to [Kali Linux](https://www.kali.org/) for being the primary operator platform this project targets. GhostRedRecon is designed to feel natural on Kali because Kali already brings together the wireless, Bluetooth, packet-capture, and security tooling needed for serious authorized lab work.
 
-These projects belong to their respective authors and maintainers. GhostRedRecon integrates with them but is not affiliated with or endorsed by them.
+Runtime and ecosystem projects used by or supported around GhostRedRecon include:
+
+| Project | Role In GhostRedRecon |
+| --- | --- |
+| [Kali Linux](https://www.kali.org/) | Primary Linux target and operator environment. |
+| [Python](https://www.python.org/) | Backend runtime and analysis engine language. |
+| [FastAPI](https://fastapi.tiangolo.com/) | Local backend API framework. |
+| [Uvicorn](https://www.uvicorn.org/) | ASGI server for the backend runtime. |
+| [React](https://react.dev/) | Operator GUI framework. |
+| [Vite](https://vite.dev/) | Frontend development and production build tool. |
+| [Node.js](https://nodejs.org/) and [npm](https://www.npmjs.com/) | Frontend dependency and build runtime. |
+| [BlueZ](http://www.bluez.org/) | Linux Bluetooth stack used for BLE workflows. |
+| [Scapy](https://scapy.net/) | Packet parsing and packet-oriented Python workflows. |
+| [Aircrack-ng](https://www.aircrack-ng.org/) | WiFi capture and monitor-mode ecosystem tooling. |
+| [Kismet](https://www.kismetwireless.net/) | Wireless discovery and sensor ecosystem. |
+| [Bettercap](https://www.bettercap.org/) | Network discovery and assessment ecosystem. |
+| [tcpdump](https://www.tcpdump.org/) | Packet capture support. |
+| [Wireshark/tshark](https://www.wireshark.org/) | Packet inspection and evidence tooling. |
+| [nmap](https://nmap.org/) | Network service discovery. |
+| [arp-scan](https://github.com/royhills/arp-scan) | Local network ARP discovery. |
+| [HackRF](https://greatscottgadgets.com/hackrf/) | SDR hardware ecosystem used by hidden v2.0 workflows. |
+| [GNU Radio](https://www.gnuradio.org/) | SDR and signal-processing ecosystem. |
+| [rtl-433](https://github.com/merbanan/rtl_433) | ISM/sub-GHz decoding ecosystem. |
+| Linux wireless tools, `iw`, `rfkill`, `usbutils`, `pciutils`, `ffmpeg`, and related packages | Host visibility, capture setup, device checks, and runtime diagnostics. |
+
+These projects belong to their respective authors and maintainers. GhostRedRecon integrates with them but is not affiliated with or endorsed by them unless explicitly stated by those projects.
 
 ## License
 
