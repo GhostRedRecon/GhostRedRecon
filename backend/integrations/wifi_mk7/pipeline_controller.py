@@ -835,7 +835,22 @@ class WiFiCameraPipelineController:
         }
         explicit_camera_identity = bool(item.get("wps_primary_device_camera") or str(camera.get("family_match_confidence") or "").upper() == "HIGH")
         client_camera_context = bool(lead_kind == "client" and winner_role in {"camera", "nvr"} and family)
-        has_camera_discriminator = bool(local_or_media_protocol or cloud_or_identity_state or explicit_camera_identity or client_camera_context)
+        local_neighbor_camera_context = bool(
+            lead_kind == "client"
+            and family
+            and "local_neighbor_observed" in {
+                str(value or "").strip().lower()
+                for value in ((item.get("service_exposure") or {}).get("exposures") or [])
+            }
+            and "ARP" in protocols
+        )
+        has_camera_discriminator = bool(
+            local_or_media_protocol
+            or cloud_or_identity_state
+            or explicit_camera_identity
+            or client_camera_context
+            or local_neighbor_camera_context
+        )
         if winner_role in {"router", "hub", "speaker"} and not has_camera_discriminator:
             return False
         if str(camera.get("classification") or "").lower() in {"unresolved device", "vendor-family device"} and not has_camera_discriminator:

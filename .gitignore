@@ -4,6 +4,10 @@ logs/
 __pycache__/
 .pytest_cache/
 backend/.venv/
+ghostrecon_devices.db
+*.sqlite
+*.sqlite3
+*.db
 
 # frontend
 frontend/node_modules/
@@ -14,6 +18,8 @@ frontend/public/config.js
 evidence/
 rf_reports/
 scripts/evidence/
+identities/
+captures/
 
 # binary
 *.pcap
@@ -21,3 +27,11 @@ scripts/evidence/
 *.cap
 *.bin
 *.iq
+
+# private project notes
+GhostRedReconstatus.txt
+ghostredrecon.txt
+
+# local agent helpers
+.agents/
+.codex/

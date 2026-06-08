@@ -1,5 +1,9 @@
 # GhostRedRecon
 
+[![CI](https://github.com/GhostRedRecon/GhostRedRecon/actions/workflows/ci.yml/badge.svg)](https://github.com/GhostRedRecon/GhostRedRecon/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Platform](https://img.shields.io/badge/platform-Linux-lightgrey.svg)](#supported-operating-systems)
+
 **GhostRedRecon** is a Linux RED TEAM reconnaissance console for authorized WiFi, BLE, IoT, and camera assessment workflows. Public v1 combines a React operator GUI, a FastAPI backend, MK7AC packet-truth WiFi hunting, BLE NRF validation, Camera Hunt, and evidence-oriented audit panels into one local-first workstation tool. SDR HKRF and Hunt Drones remain hidden for v2.0 validation.
 
 Repository: <https://github.com/GhostRedRecon/GhostRedRecon>
@@ -331,10 +335,9 @@ find . \
   \( -path './frontend/node_modules' -o -path './frontend/dist' -o -path './backend/.venv' \) -prune -o \
   -type f \( -iname '*.pcap' -o -iname '*.pcapng' -o -iname '*.cap' -o -iname '*.hccapx' -o -iname '*.22000' -o -iname '*.hc22000' -o -iname '*handshake*' \) -print
 npm --prefix frontend run build
-python3 -m compileall backend
+python3 -m compileall backend tests
+python3 -m pytest
 ```
-
-Known audit status and public-release notes are tracked in `GhostRedReconstatus.txt`.
 
 ## Security And Safety
 
@@ -360,15 +363,7 @@ See [SECURITY.md](SECURITY.md) for reporting and safe-use guidance.
 
 ## Contributing
 
-Contributions are welcome when they keep the project local-first, authorized-use focused, evidence-oriented, and practical on Kali/Linux operator workstations.
-
-Before opening a pull request:
-
-- Keep runtime artifacts out of commits.
-- Keep dangerous workflows scoped to authorized lab use.
-- Run frontend build and backend compile checks.
-- Document any new external tool dependency.
-- Update the Manual tab or README when user workflow changes.
+Contributions are welcome when they keep the project local-first, authorized-use focused, evidence-oriented, and practical on Kali/Linux operator workstations. See [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request.
 
 ## Support The Project
 
@@ -390,4 +385,4 @@ These projects belong to their respective authors and maintainers. GhostRedRecon
 
 ## License
 
-A root `LICENSE` file was not present in this working tree at the time this README was updated. Add the intended license file before public v1 release, then update this section to match it.
+GhostRedRecon is released under the [MIT License](LICENSE).

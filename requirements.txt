@@ -1,0 +1,12 @@
+aiofiles
+fastapi
+numpy
+psutil
+pydantic
+python-multipart
+pyserial
+pytest
+pyyaml
+requests
+scapy
+uvicorn[standard]
