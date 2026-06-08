@@ -23,6 +23,7 @@ GhostRedRecon is for red-team operators, ethical hackers, wireless lab builders,
 It is designed for authorized labs and assessments where the interesting question is not just "what is broadcasting?" but "what is it, why do we think that, what evidence supports it, and what should the operator review next?"
 
 Public v1 gives operators a focused toolkit:
+<img width="1344" height="1088" alt="Screen1" src="https://github.com/user-attachments/assets/bc63a889-d185-4f00-aedb-ec102d583ffb" />
 
 - WiFi MK7AC packet-truth hunting for AP/client discovery and evidence review.
 - Camera Hunt for WiFi, IP, and cloud-camera lead detection.
